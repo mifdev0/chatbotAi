@@ -19,6 +19,13 @@ const config = {
     baseUrl: 'https://api.fonnte.com',
   },
 
+  // Admin Auth
+  admin: {
+    user: process.env.ADMIN_USER || 'admin',
+    pass: process.env.ADMIN_PASS || 'admin123',
+    sessionSecret: process.env.SESSION_SECRET || 'super-secret-key-ai-bot',
+  },
+
   // Database
   database: {
     conversations: './data/conversations.db',

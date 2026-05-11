@@ -1,12 +1,26 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
+const config = require('./config/env');
 const webhookRoutes = require('./routes/webhook');
 const apiRoutes = require('./routes/api');
+const { authRouter, isAuthenticated } = require('./routes/auth');
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+
+// Session management
+app.use(session({
+  secret: config.admin.sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: false, // Set to true if using HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 24 jam
+  }
+}));
 
 // CORS untuk dashboard HTML
 app.use((req, res, next) => {
@@ -17,20 +31,32 @@ app.use((req, res, next) => {
   next();
 });
 
-// Static files (dashboard)
+// Public routes (Auth & Login Page)
+app.use('/auth', authRouter);
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/login.html'));
+});
+
+// Protected static files (dashboard.html)
+app.get('/dashboard.html', isAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/dashboard.html'));
+});
+
+// Static files (accessible for images/css if needed)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Routes
+// Protected Routes
+app.use('/api', isAuthenticated, apiRoutes);
+
+// Public Webhook (untuk WhatsApp)
 app.use('/', webhookRoutes);
-app.use('/api', apiRoutes);
 
 // Health check
 app.get('/', (req, res) => {
   res.json({ 
     status: '🤖 AI WhatsApp Bot running', 
-    version: '2.1.0',
+    version: '2.2.0',
     port: process.env.PORT || 3000 
   });
 });
-
 module.exports = app;
