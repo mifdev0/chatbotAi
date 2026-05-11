@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Portal | AI WhatsApp Bot</title>
+<title>AI WhatsApp Bot Admin</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,28 +13,94 @@
     theme: {
       extend: {
         colors: {
-          "surface": "#f8f9ff",
-          "surface-container-lowest": "#ffffff",
-          "surface-container-low": "#eef4fe",
-          "surface-container": "#e9eef9",
-          "surface-container-high": "#e3e8f3",
-          "on-surface": "#161c23",
+          "surface-dim": "#d5dae5",
+          "on-primary-container": "#e0e4ff",
+          "inverse-on-surface": "#ecf1fc",
+          "inverse-primary": "#b6c4ff",
+          "background": "#f8f9ff",
+          "secondary": "#5c5f60",
+          "error-container": "#ffdad6",
+          "outline-variant": "#c3c5d8",
+          "on-primary-fixed": "#001550",
+          "on-tertiary-fixed": "#191c1e",
+          "inverse-surface": "#2b3139",
+          "on-background": "#161c23",
+          "surface-tint": "#004de9",
+          "on-error": "#ffffff",
+          "on-tertiary-fixed-variant": "#444749",
+          "tertiary-fixed": "#e1e2e4",
           "on-surface-variant": "#434656",
           "outline": "#737687",
-          "outline-variant": "#c3c5d8",
-          "primary": "#0040c5",
-          "on-primary": "#ffffff",
+          "secondary-fixed-dim": "#c5c7c8",
+          "secondary-fixed": "#e1e2e4",
+          "tertiary-container": "#656769",
+          "primary-fixed-dim": "#b6c4ff",
+          "tertiary": "#4c4f51",
+          "surface-container-low": "#eef4fe",
+          "on-primary-fixed-variant": "#0039b3",
+          "on-secondary-fixed-variant": "#444749",
+          "on-error-container": "#93000a",
+          "on-secondary-container": "#606365",
           "primary-container": "#1456f5",
-          "on-primary-container": "#e0e4ff",
+          "surface-container-highest": "#dde3ed",
+          "surface-container-high": "#e3e8f3",
+          "primary": "#0040c5",
+          "on-secondary-fixed": "#191c1e",
           "primary-fixed": "#dce1ff",
+          "tertiary-fixed-dim": "#c5c6c8",
+          "surface": "#f8f9ff",
+          "surface-container-lowest": "#ffffff",
+          "on-primary": "#ffffff",
+          "on-tertiary-container": "#e5e6e8",
+          "surface-variant": "#dde3ed",
+          "surface-bright": "#f8f9ff",
+          "on-tertiary": "#ffffff",
+          "on-secondary": "#ffffff",
+          "error": "#ba1a1a",
+          "secondary-container": "#dee0e2",
+          "on-surface": "#161c23",
+          "surface-container": "#e9eef9",
           "success": "#10B981",
           "warning": "#F59E0B",
-          "error": "#ba1a1a",
-          "error-container": "#ffdad6",
-          "background": "#f8f9ff"
+          "info": "#3B82F6"
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "2xl": "1rem",
+          "3xl": "1.5rem",
+          "full": "9999px"
+        },
+        spacing: {
+          "sm": "8px",
+          "margin-page": "40px",
+          "gutter": "20px",
+          "unit": "4px",
+          "xl": "32px",
+          "lg": "24px",
+          "md": "16px",
+          "xs": "4px"
         },
         fontFamily: {
-          sans: ["Inter", "sans-serif"]
+          "body-lg": ["Inter"],
+          "body-md": ["Inter"],
+          "h1": ["Inter"],
+          "label-md": ["Inter"],
+          "h3": ["Inter"],
+          "display": ["Inter"],
+          "label-sm": ["Inter"],
+          "h2": ["Inter"]
+        },
+        fontSize: {
+          "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+          "body-md": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+          "h1": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+          "label-md": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+          "h3": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+          "display": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
+          "label-sm": ["12px", { lineHeight: "18px", fontWeight: "500" }],
+          "h2": ["20px", { lineHeight: "28px", fontWeight: "600" }]
         }
       }
     }
@@ -42,37 +108,46 @@
 </script>
 <style>
   body { font-family: 'Inter', sans-serif; }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .material-symbols-outlined.fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
   .scrollbar-thin::-webkit-scrollbar { width: 5px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: #c3c5d8; border-radius: 10px; }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #737687; }
-  .chat-input textarea { field-sizing: content; min-height: 40px; max-height: 120px; }
+  .chat-input textarea {
+    field-sizing: content;
+    min-height: 40px;
+    max-height: 120px;
+  }
   .fade-in { animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .animate-slide-up { animation: slide-up 0.3s ease-out; }
   .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #737687; animation: typingBounce 1.4s infinite; }
   .typing-dot:nth-child(2) { animation-delay: 0.2s; }
   .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
 </style>
 </head>
-<body class="bg-background text-on-surface h-screen overflow-hidden flex flex-col md:flex-row">
+<body class="bg-background text-on-surface h-screen overflow-hidden flex">
 
-<!-- Desktop SideNavBar -->
-<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col items-center py-6 z-50 bg-surface-container-lowest border-r border-outline-variant w-[64px]">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col items-center py-4 z-50 bg-surface-container-lowest border-r border-outline-variant w-[56px]">
   <div class="mb-8">
-    <div class="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg shadow-blue-100">
+    <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-blue-100">
       <span class="material-symbols-outlined">smart_toy</span>
     </div>
   </div>
-  <div class="flex flex-col gap-6">
+  <div class="flex flex-col gap-4">
     <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Dashboard">
       <span class="material-symbols-outlined">dashboard</span>
     </button>
-    <button class="flex items-center justify-center text-primary w-10 h-10 bg-primary-fixed/30 rounded-xl" title="Messages">
+    <button class="flex items-center justify-center bg-primary-container text-on-primary-container rounded-xl w-10 h-10 shadow-sm" title="Messages">
       <span class="material-symbols-outlined fill">chat_bubble</span>
     </button>
     <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Tickets">
@@ -82,79 +157,63 @@
       <span class="material-symbols-outlined">analytics</span>
     </button>
   </div>
-  <div class="mt-auto flex flex-col gap-6">
+  <div class="mt-auto flex flex-col gap-4">
     <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Settings">
       <span class="material-symbols-outlined">settings</span>
     </button>
-    <a href="/auth/logout" class="flex items-center justify-center text-error w-10 h-10 hover:bg-error-container transition-colors rounded-xl" title="Logout">
+    <a href="/auth/logout" class="flex items-center justify-center text-error w-10 h-10 hover:bg-error-container transition-colors rounded-xl" title="Logout">  
       <span class="material-symbols-outlined">logout</span>
     </a>
   </div>
 </nav>
 
-<!-- Mobile Header -->
-<header class="md:hidden flex items-center justify-between px-4 py-3 bg-surface-container-lowest border-b border-outline-variant z-40">
-  <div class="flex items-center gap-3">
-    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-      <span class="material-symbols-outlined text-[18px]">smart_toy</span>
-    </div>
-    <h1 class="text-[16px] font-semibold tracking-tight">Admin Portal</h1>
-  </div>
-  <div class="flex items-center gap-3">
-    <div class="w-2 h-2 rounded-full bg-success" id="mobileStatusDot"></div>
-    <a href="/auth/logout" class="text-error">
-      <span class="material-symbols-outlined text-[20px]">logout</span>
-    </a>
-  </div>
-</header>
+<!-- Main Content -->
+<div class="flex-1 flex ml-[56px] h-full">
 
-<!-- Main Container -->
-<div class="flex-1 flex md:ml-[64px] h-full overflow-hidden relative">
-
-  <!-- Sidebar (Convo List) -->
-  <aside id="convoSidebar" class="w-full md:w-[320px] lg:w-[380px] bg-surface-container-lowest border-r border-outline-variant flex flex-col h-full flex-shrink-0 z-30 transition-transform duration-300">
-    <div class="p-4 border-b border-outline-variant">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-[20px] font-bold text-on-surface">Percakapan</h2>
-        <div class="hidden md:flex items-center gap-2 px-2 py-1 bg-surface-container rounded-full">
-           <span class="w-1.5 h-1.5 rounded-full bg-success" id="statusDot"></span>
-           <span class="text-[11px] font-medium text-on-surface-variant uppercase tracking-wider" id="statusText">Terhubung</span>
+  <!-- Conversation List Sidebar -->
+  <aside class="w-[360px] bg-surface-container-lowest border-r border-outline-variant flex flex-col h-full flex-shrink-0">
+    <div class="p-md border-b border-outline-variant">
+      <div class="flex items-center justify-between mb-md">
+        <h2 class="font-h2 text-h2 text-on-surface font-bold tracking-tight">Percakapan</h2>
+        <div class="flex items-center gap-2 px-2 py-1 bg-surface-container rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse" id="statusDot"></span>
+          <span class="text-[10px] font-bold text-success uppercase tracking-wider" id="statusText">Terhubung</span>
         </div>
       </div>
-      <div class="relative mb-4">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-        <input id="searchConvo" oninput="filterConversations()" class="w-full bg-surface-container border-none rounded-xl pl-10 pr-4 py-2.5 text-[14px] focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none" placeholder="Cari kontak atau pesan..." type="text">
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+        <input class="w-full bg-surface-container border-none rounded-xl pl-[36px] pr-sm py-2.5 text-body-md focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none" placeholder="Cari kontak atau pesan..." type="text" id="searchConvo" oninput="filterConversations()">
       </div>
-      <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-        <button onclick="setActiveFilter('all', this)" data-filter="all" class="text-primary font-bold border-b-2 border-primary pb-2 text-[13px] whitespace-nowrap">Semua</button>
-        <button onclick="setActiveFilter('escalated', this)" data-filter="escalated" class="text-on-surface-variant pb-2 text-[13px] whitespace-nowrap hover:text-primary">Eskalasi</button>
-        <button onclick="setActiveFilter('done', this)" data-filter="done" class="text-on-surface-variant pb-2 text-[13px] whitespace-nowrap hover:text-primary">Selesai</button>
+      <div class="flex gap-lg mt-md">
+        <button class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-colors" data-filter="all" onclick="setActiveFilter('all', this)">Semua</button>
+        <button class="text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors" data-filter="escalated" onclick="setActiveFilter('escalated', this)">Eskalasi</button>
+        <button class="text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors" data-filter="done" onclick="setActiveFilter('done', this)">Selesai</button>
       </div>
     </div>
 
-    <div id="conversationList" class="flex-1 overflow-y-auto scrollbar-thin">
-      <div class="flex flex-col items-center justify-center h-64 text-on-surface-variant gap-3 opacity-40">
+    <div class="flex-1 overflow-y-auto scrollbar-thin" id="conversationList">
+      <div class="flex flex-col items-center justify-center h-full text-on-surface-variant gap-3 opacity-40">
         <span class="material-symbols-outlined text-[48px]">chat_bubble</span>
-        <p class="text-[14px]">Memuat percakapan...</p>
+        <p class="font-body-md">Memuat percakapan...</p>
       </div>
     </div>
 
-    <div class="p-4 border-t border-outline-variant bg-surface-container-lowest hidden md:block">
-      <div class="flex items-center justify-between text-[12px] text-on-surface-variant mb-2">
+    <div class="p-md border-t border-outline-variant bg-surface-container-lowest">
+      <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant mb-2">
         <span>Total Percakapan</span>
-        <span id="statTotal" class="font-bold text-on-surface text-[14px]">0</span>
+        <span class="font-bold text-on-surface text-[14px]" id="statTotal">0</span>
       </div>
       <div class="grid grid-cols-3 gap-2">
-        <div class="bg-surface-container p-2 rounded-lg text-center">
-          <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">AI</p>
+        <div class="bg-surface-container p-2 rounded-lg text-center shadow-sm">
+          <p class="text-[9px] text-on-surface-variant uppercase font-bold tracking-tighter mb-0.5">AI</p>
           <p id="statAi" class="font-bold text-primary text-[14px]">0</p>
         </div>
-        <div class="bg-surface-container p-2 rounded-lg text-center border border-warning/10">
-          <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Eskalasi</p>
+        <div class="bg-surface-container p-2 rounded-lg text-center border border-warning/10 shadow-sm">
+          <p class="text-[9px] text-on-surface-variant uppercase font-bold tracking-tighter mb-0.5">Esc</p>
           <p id="statEsc" class="font-bold text-warning text-[14px]">0</p>
         </div>
-        <div class="bg-surface-container p-2 rounded-lg text-center border border-success/10">
-          <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Selesai</p>
+        <div class="bg-surface-container p-2 rounded-lg text-center border border-success/10 shadow-sm">
+          <p class="text-[9px] text-on-surface-variant uppercase font-bold tracking-tighter mb-0.5">Done</p>
           <p id="statDone" class="font-bold text-success text-[14px]">0</p>
         </div>
       </div>
@@ -162,84 +221,62 @@
   </aside>
 
   <!-- Chat Panel -->
-  <main id="chatPanel" class="absolute inset-0 md:relative md:flex flex-1 flex flex-col h-full bg-white z-40 translate-x-full md:translate-x-0 transition-transform duration-300">
-    
+  <main class="flex-1 flex flex-col h-full bg-white relative">
+
     <!-- Chat Header -->
-    <header class="flex justify-between items-center w-full px-4 py-3 md:py-4 border-b border-outline-variant flex-shrink-0 bg-white/80 backdrop-blur-md">
-      <div class="flex items-center gap-3 min-w-0">
-        <button onclick="closeChatMobile()" class="md:hidden p-1 text-on-surface-variant">
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-        <div id="chatAvatar" class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-[15px] flex-shrink-0">?</div>
+    <header class="flex justify-between items-center w-full px-lg py-md border-b border-outline-variant flex-shrink-0 bg-white/80 backdrop-blur-md z-10">
+      <div class="flex items-center gap-md" id="chatHeaderInfo">
+        <div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center text-on-surface font-bold text-body-lg shadow-sm border border-outline-variant" id="chatAvatar">?</div>  
         <div class="min-w-0">
-          <h3 id="chatName" class="text-[16px] font-bold text-on-surface truncate">Pilih Percakapan</h3>
-          <p id="chatStatusMeta" class="text-[12px] text-on-surface-variant truncate">Belum ada chat dipilih</p>
+          <h1 class="font-h3 text-h3 text-on-surface flex items-center gap-sm font-bold truncate" id="chatName">Pilih Percakapan</h1>
+          <p class="text-[12px] text-on-surface-variant font-medium truncate" id="chatStatusMeta">Klik pada daftar percakapan untuk memulai</p>
         </div>
       </div>
-      
-      <div class="flex items-center gap-2">
-        <div id="actionButtons" class="hidden lg:flex items-center gap-2" style="display:none">
-          <button onclick="updateConversationStatus('ai')" class="px-3 py-1.5 border border-outline-variant rounded-lg text-[13px] font-medium hover:bg-surface-container transition-colors flex items-center gap-1.5">
-             <span class="material-symbols-outlined text-[18px]">smart_toy</span> Mode AI
-          </button>
-          <button onclick="updateConversationStatus('escalated')" class="px-3 py-1.5 border border-outline-variant rounded-lg text-[13px] font-medium hover:bg-warning/10 hover:text-warning transition-colors flex items-center gap-1.5">
-             <span class="material-symbols-outlined text-[18px]">escalator_warning</span> Eskalasi
-          </button>
-          <button onclick="updateConversationStatus('done')" class="px-4 py-1.5 bg-primary text-white rounded-lg text-[13px] font-bold hover:bg-primary-container shadow-sm transition-colors">
-             Selesai
-          </button>
-        </div>
-        <button id="mobileActionBtn" onclick="toggleMobileActions()" class="lg:hidden p-2 text-on-surface-variant" style="display:none">
-          <span class="material-symbols-outlined">more_vert</span>
+      <div class="flex items-center gap-sm" id="actionButtons" style="display: none;">
+        <button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-1.5 shadow-sm" onclick="updateConversationStatus('ai')">
+          <span class="material-symbols-outlined text-[18px]">smart_toy</span> Mode AI
+        </button>
+        <button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-warning/10 hover:text-warning hover:border-warning/50 transition-all flex items-center gap-1.5 shadow-sm" onclick="updateConversationStatus('escalated')">
+          <span class="material-symbols-outlined text-[18px]">escalator_warning</span> Eskalasi
+        </button>
+        <button class="px-5 py-2 bg-primary rounded-lg font-label-md text-label-md text-on-primary hover:bg-primary-container transition-all shadow-md flex items-center gap-1.5" onclick="updateConversationStatus('done')">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span> Selesai
         </button>
       </div>
     </header>
 
-    <!-- Messages Area -->
-    <div id="chatMessagesArea" class="flex-1 overflow-y-auto p-4 md:p-6 bg-surface flex flex-col gap-6 scrollbar-thin">
-      <div id="emptyChatState" class="flex-1 flex flex-col items-center justify-center text-on-surface-variant gap-4 py-20">
-        <div class="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-sm border border-outline-variant opacity-50">
-          <span class="material-symbols-outlined text-[48px] text-primary">forum</span>
+    <!-- Chat Messages -->
+    <div class="flex-1 overflow-y-auto p-lg bg-surface scrollbar-thin flex flex-col gap-6" id="chatMessagesArea">
+      <div class="flex-1 flex flex-col items-center justify-center text-on-surface-variant gap-4 opacity-50 py-20" id="emptyChatState">
+        <div class="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-sm border border-outline-variant">
+          <span class="material-symbols-outlined text-[48px] text-primary fill">forum</span>
         </div>
-        <p class="text-[14px]">Pilih chat untuk mulai membalas</p>
+        <h2 class="font-h2 text-h2 text-on-surface font-bold">Mulai Percakapan</h2>
+        <p class="font-body-md text-center max-w-[300px]">Pilih chat dari panel kiri untuk melihat riwayat pesan dan membalas secara manual.</p>
       </div>
     </div>
 
-    <!-- Input Area -->
-    <div class="p-4 md:p-6 border-t border-outline-variant bg-white">
-      <div class="flex items-end gap-2 bg-surface-container rounded-2xl p-2 border border-transparent focus-within:border-primary focus-within:bg-white transition-all shadow-sm">
-        <textarea id="staffReplyInput" disabled onkeydown="handleReplyKeydown(event)" class="flex-1 bg-transparent border-none focus:ring-0 resize-none text-[14px] p-2 outline-none max-h-[120px]" placeholder="Tulis balasan..." rows="1"></textarea>
-        <button id="sendButton" disabled onclick="sendStaffReply()" class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primary-container shadow-md disabled:opacity-30 disabled:shadow-none transition-all">
-          <span class="material-symbols-outlined text-[20px]">send</span>
+    <!-- Chat Input -->
+    <div class="p-lg border-t border-outline-variant bg-white z-10">
+      <div class="flex items-end gap-sm bg-surface-container rounded-2xl p-2 border border-transparent focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/5 transition-all shadow-sm">
+        <textarea class="chat-input flex-1 bg-transparent border-none focus:ring-0 resize-none font-body-md text-body-md text-on-surface p-2 max-h-[120px] outline-none" id="staffReplyInput" placeholder="Tulis balasan di sini..." rows="1" onkeydown="handleReplyKeydown(event)" disabled></textarea>
+        <button class="w-11 h-11 bg-primary text-white rounded-xl hover:bg-primary-container transition-all shadow-lg flex items-center justify-center disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed" id="sendButton" onclick="sendStaffReply()" disabled>
+          <span class="material-symbols-outlined text-[22px]">send</span>
         </button>
+      </div>
+      <div class="flex justify-between items-center mt-3 px-2">
+        <span class="text-[11px] text-on-surface-variant font-medium flex items-center gap-1.5 opacity-60">
+          <span class="material-symbols-outlined text-[14px]">keyboard</span>
+          <b>Enter</b> untuk kirim · <b>Shift+Enter</b> baris baru
+        </span>
       </div>
     </div>
   </main>
-</div>
 
-<!-- Mobile Bottom Sheet -->
-<div id="mobileActionOverlay" class="hidden fixed inset-0 bg-black/40 z-[100]" onclick="toggleMobileActions()">
-  <div class="absolute bottom-0 left-0 w-full bg-white rounded-t-[32px] p-6 animate-slide-up" onclick="event.stopPropagation()">
-    <div class="w-12 h-1 bg-outline-variant rounded-full mx-auto mb-6"></div>
-    <div class="flex flex-col gap-2">
-      <button onclick="updateConversationStatus('ai'); toggleMobileActions()" class="flex items-center gap-4 p-4 hover:bg-surface rounded-2xl">
-        <span class="material-symbols-outlined text-primary">smart_toy</span>
-        <span class="font-medium">Kembalikan ke Mode AI</span>
-      </button>
-      <button onclick="updateConversationStatus('escalated'); toggleMobileActions()" class="flex items-center gap-4 p-4 hover:bg-surface rounded-2xl">
-        <span class="material-symbols-outlined text-warning">escalator_warning</span>
-        <span class="font-medium">Eskalasi ke Staf IT</span>
-      </button>
-      <button onclick="updateConversationStatus('done'); toggleMobileActions()" class="flex items-center gap-4 p-4 hover:bg-primary/5 text-primary rounded-2xl font-bold">
-        <span class="material-symbols-outlined">check_circle</span>
-        <span class="font-medium">Tandai Sudah Selesai</span>
-      </button>
-    </div>
-  </div>
 </div>
 
 <!-- Global Toast -->
-<div id="globalToast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-[#1f2329] text-white px-6 py-3 rounded-2xl text-[13px] font-medium shadow-2xl opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-[110]"></div>
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-[#1f2329] text-white px-6 py-3 rounded-2xl text-[13px] font-bold shadow-2xl opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-[100]" id="globalToast"></div>
 
 <script>
 let socket = null;
@@ -248,64 +285,72 @@ let activePhoneKey = null;
 let currentFilter = 'all';
 let searchQuery = '';
 
-function getApiBase() { return window.location.origin; }
+function getApiBase() {
+  return window.location.origin;
+}
 
 function connectWebSocket() {
-  if (socket) { try { socket.close(); } catch(e){} }
+  if (socket) { try { socket.close(); } catch (e) {} }
   const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
   const wsUrl = wsProtocol + window.location.host;
   
+  console.log('[WS] Menghubungkan ke:', wsUrl);
   socket = new WebSocket(wsUrl);
-  socket.onopen = () => {
+  
+  socket.onopen = function() {
     updateConnectionUI(true, 'Terhubung');
     showToast('Dashboard terhubung');
   };
-  socket.onclose = () => {
+  socket.onclose = function() {
     updateConnectionUI(false, 'Terputus');
     setTimeout(connectWebSocket, 5000);
   };
-  socket.onmessage = (ev) => {
-    const packet = JSON.parse(ev.data);
+  socket.onmessage = function(ev) {
+    let packet = JSON.parse(ev.data);
     handleSocketMessage(packet.event, packet.data);
   };
 }
 
 function updateConnectionUI(online, label) {
-  const dot = document.getElementById('statusDot');
-  const txt = document.getElementById('statusText');
-  const mDot = document.getElementById('mobileStatusDot');
-  if(online) {
+  let dot = document.getElementById('statusDot');
+  let txt = document.getElementById('statusText');
+  if (online) {
     if(dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-success animate-pulse';
     if(txt) txt.textContent = label;
-    if(mDot) mDot.className = 'w-2 h-2 rounded-full bg-success';
   } else {
     if(dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-error';
     if(txt) txt.textContent = label;
-    if(mDot) mDot.className = 'w-2 h-2 rounded-full bg-error';
   }
 }
 
 function handleSocketMessage(event, data) {
   if (event === 'init') {
     conversationsMap.clear();
-    data.forEach(c => conversationsMap.set(c.phone, c));
+    data.forEach(function(conv) { conversationsMap.set(conv.phone, conv); });
     renderConversationList();
     updateStatsUI();
-  } else if (event === 'message') {
-    if (!conversationsMap.has(data.phone)) {
-      conversationsMap.set(data.phone, {
-        phone: data.phone, name: data.name || data.phone, status: 'ai', messages: [], updatedAt: Date.now()
+  }
+
+  if (event === 'message') {
+    let phone = data.phone;
+    if (!conversationsMap.has(phone)) {
+      conversationsMap.set(phone, {
+        phone: phone, name: data.name || phone, status: 'ai', messages: [], updatedAt: Date.now()
       });
     }
-    const conv = conversationsMap.get(data.phone);
+
+    let conv = conversationsMap.get(phone);
     conv.messages.push({ from: data.from, text: data.text, time: data.time });
     conv.updatedAt = data.time || Date.now();
     renderConversationList();
     updateStatsUI();
-    if (activePhoneKey === data.phone) renderChatMessages();
-    else if (data.from === 'user') showToast('Pesan baru: ' + (conv.name || data.phone));
-  } else if (event === 'status_change') {
-    const conv = conversationsMap.get(data.phone);
+
+    if (activePhoneKey === phone) renderChatMessages();
+    else if (data.from === 'user') showToast('Pesan baru dari ' + (conv.name || phone));
+  }
+
+  if (event === 'status_change') {
+    let conv = conversationsMap.get(data.phone);
     if (conv) {
       conv.status = data.status;
       renderConversationList();
@@ -316,33 +361,36 @@ function handleSocketMessage(event, data) {
 }
 
 function renderConversationList() {
-  const container = document.getElementById('conversationList');
-  const list = Array.from(conversationsMap.values()).sort((a,b) => b.updatedAt - a.updatedAt);
-  
-  const filtered = list.filter(c => {
+  let container = document.getElementById('conversationList');
+  let convArray = Array.from(conversationsMap.values()).sort(function(a, b) {
+    return (b.updatedAt || 0) - (a.updatedAt || 0);
+  });
+
+  let filtered = convArray.filter(function(c) {
     if (currentFilter !== 'all' && c.status !== currentFilter) return false;
     if (searchQuery) {
-      const lastText = c.messages.length ? c.messages[c.messages.length-1].text : '';
-      return (c.name + c.phone + lastText).toLowerCase().includes(searchQuery);
+      let lastMsg = c.messages.length ? c.messages[c.messages.length - 1].text : '';
+      let hay = ((c.name || '') + ' ' + c.phone + ' ' + lastMsg).toLowerCase();
+      return hay.indexOf(searchQuery) !== -1;
     }
     return true;
   });
 
   if (!filtered.length) {
-    container.innerHTML = '<div class="p-10 text-center text-on-surface-variant opacity-40 text-[13px]">Kosong</div>';
+    container.innerHTML = '<div class="p-10 text-center opacity-30 text-[13px]">Tidak ada chat</div>';
     return;
   }
 
-  container.innerHTML = filtered.map(c => {
-    const active = activePhoneKey === c.phone;
-    const lastMsg = c.messages.length ? c.messages[c.messages.length-1].text : 'Chat baru';
+  container.innerHTML = filtered.map(function(conv) {
+    let active = activePhoneKey === conv.phone;
+    let lastMsg = conv.messages.length ? conv.messages[conv.messages.length - 1].text : 'Chat baru';
     return `
-      <div onclick="selectConversation('${c.phone}')" class="flex items-center gap-3 px-4 py-4 cursor-pointer transition-all ${active ? 'bg-surface-container' : 'hover:bg-surface-container-low'} border-l-4 ${active ? 'border-primary' : 'border-transparent'}">
-        <div class="w-11 h-11 rounded-2xl bg-white border border-outline-variant flex items-center justify-center text-on-surface font-bold shadow-sm">${(c.name||'U').slice(0,2).toUpperCase()}</div>
+      <div onclick="selectConversation('${conv.phone}')" class="flex items-center gap-3 px-md py-4 cursor-pointer transition-all ${active ? 'bg-surface-container shadow-[inset_0_0_0_1px_rgba(0,0,0,0.03)]' : 'hover:bg-surface-container-low'} border-l-4 ${active ? 'border-primary' : 'border-transparent'}">
+        <div class="w-11 h-11 rounded-2xl bg-white border border-outline-variant flex-shrink-0 flex items-center justify-center text-on-surface font-bold text-[14px] shadow-sm uppercase">${(conv.name||conv.phone).slice(0,2)}</div>
         <div class="flex-1 min-w-0">
           <div class="flex justify-between items-baseline mb-1">
-            <h4 class="text-[14px] font-bold truncate">${escapeHtml(c.name || c.phone)}</h4>
-            <span class="text-[10px] text-on-surface-variant">${formatTime(c.updatedAt)}</span>
+            <h4 class="font-bold text-[14px] truncate text-on-surface">${escapeHtml(conv.name || conv.phone)}</h4>
+            <span class="text-[10px] text-on-surface-variant font-medium">${formatTime(conv.updatedAt)}</span>
           </div>
           <p class="text-[13px] text-on-surface-variant truncate">${escapeHtml(lastMsg)}</p>
         </div>
@@ -353,51 +401,47 @@ function renderConversationList() {
 
 function selectConversation(phone) {
   activePhoneKey = phone;
-  if (window.innerWidth < 768) document.getElementById('chatPanel').classList.remove('translate-x-full');
-  
   renderConversationList();
   renderChatHeader();
   renderChatMessages();
-  
   document.getElementById('staffReplyInput').disabled = false;
   document.getElementById('sendButton').disabled = false;
   document.getElementById('actionButtons').style.display = 'flex';
-  document.getElementById('mobileActionBtn').style.display = 'block';
   document.getElementById('emptyChatState').style.display = 'none';
 }
 
 function renderChatHeader() {
-  const c = conversationsMap.get(activePhoneKey);
-  if (!c) return;
-  document.getElementById('chatAvatar').textContent = (c.name||'U').slice(0,2).toUpperCase();
-  document.getElementById('chatName').innerHTML = `${escapeHtml(c.name || c.phone)} ${statusChip(c.status)}`;
-  document.getElementById('chatStatusMeta').textContent = c.phone + ' · Aktif';
+  let conv = conversationsMap.get(activePhoneKey);
+  if (!conv) return;
+  document.getElementById('chatAvatar').textContent = (conv.name || conv.phone).slice(0, 2).toUpperCase();
+  document.getElementById('chatName').innerHTML = escapeHtml(conv.name || conv.phone) + statusChip(conv.status);
+  document.getElementById('chatStatusMeta').innerHTML = escapeHtml(conv.phone) + ' &middot; Aktif';
 }
 
 function statusChip(s) {
-  const colors = s === 'escalated' ? 'bg-warning/10 text-warning' : (s === 'done' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary');
-  const label = s === 'escalated' ? 'Eskalasi' : (s === 'done' ? 'Selesai' : 'AI');
-  return `<span class="ml-2 px-2 py-0.5 ${colors} rounded-md text-[10px] font-bold uppercase tracking-wider">${label}</span>`;
+  let colors = s === 'escalated' ? 'bg-warning/10 text-warning' : (s === 'done' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary');
+  let label = s === 'escalated' ? 'Eskalasi' : (s === 'done' ? 'Selesai' : 'AI');
+  return `<span class="ml-2 px-2 py-0.5 ${colors} rounded-md text-[9px] font-bold uppercase tracking-wider">${label}</span>`;
 }
 
 function renderChatMessages() {
-  const c = conversationsMap.get(activePhoneKey);
-  const area = document.getElementById('chatMessagesArea');
-  if(!c || !c.messages.length) {
+  let conv = conversationsMap.get(activePhoneKey);
+  let area = document.getElementById('chatMessagesArea');
+  if (!conv || !conv.messages.length) {
     area.innerHTML = '<div class="py-20 text-center opacity-30 text-[13px]">Belum ada pesan</div>';
     return;
   }
 
-  area.innerHTML = c.messages.map(m => {
-    const isMe = m.from === 'staff' || m.from === 'ai';
+  area.innerHTML = conv.messages.map(function(msg) {
+    let isMe = msg.from === 'staff' || msg.from === 'ai';
     return `
       <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} fade-in">
         <div class="flex items-center gap-2 mb-1 px-1">
-          <span class="text-[10px] font-bold text-on-surface-variant uppercase">${m.from === 'ai' ? '🤖 AI' : (m.from === 'staff' ? '👨‍💻 Admin' : 'User')}</span>
-          <span class="text-[10px] text-outline">${new Date(m.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</span>
+          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wide">${msg.from === 'ai' ? '🤖 AI' : (msg.from === 'staff' ? '👨‍💻 Admin' : 'User')}</span>
+          <span class="text-[10px] text-outline font-medium">${new Date(msg.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</span>
         </div>
-        <div class="max-w-[85%] md:max-w-[70%] p-3 md:p-4 rounded-2xl shadow-sm text-[14px] leading-relaxed ${isMe ? 'bg-primary text-white rounded-tr-none shadow-blue-100' : 'bg-white text-on-surface border border-outline-variant rounded-tl-none'}">
-          ${escapeHtml(m.text).replace(/\n/g, '<br>')}
+        <div class="max-w-[85%] md:max-w-[70%] p-4 rounded-2xl shadow-sm text-[14px] leading-relaxed ${isMe ? 'bg-primary text-white rounded-tr-none shadow-blue-100' : 'bg-white text-on-surface border border-outline-variant rounded-tl-none'}">
+          ${escapeHtml(msg.text).replace(/\n/g, '<br>')}
         </div>
       </div>
     `;
@@ -406,21 +450,16 @@ function renderChatMessages() {
 }
 
 function sendStaffReply() {
-  const input = document.getElementById('staffReplyInput');
-  const text = input.value.trim();
+  let input = document.getElementById('staffReplyInput');
+  let text = input.value.trim();
   if (!text || !activePhoneKey) return;
-  
-  const originalText = input.value;
   input.value = '';
-  
+
   fetch(getApiBase() + '/api/conversations/' + activePhoneKey + '/reply', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  }).catch(() => {
-    showToast('Gagal mengirim');
-    input.value = originalText;
-  });
+    body: JSON.stringify({ text: text })
+  }).catch(() => showToast('Gagal mengirim'));
 }
 
 function updateConversationStatus(status) {
@@ -428,48 +467,44 @@ function updateConversationStatus(status) {
   fetch(getApiBase() + '/api/conversations/' + activePhoneKey + '/status', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status })
-  }).then(() => showToast('Status: ' + status))
-    .catch(() => showToast('Gagal update'));
+    body: JSON.stringify({ status: status })
+  }).then(() => showToast('Status diperbarui')).catch(() => showToast('Gagal update'));
 }
 
-function closeChatMobile() {
-  document.getElementById('chatPanel').classList.add('translate-x-full');
-  activePhoneKey = null;
+function setActiveFilter(filter, element) {
+  currentFilter = filter;
+  document.querySelectorAll('[data-filter]').forEach(b => b.className = 'text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors');
+  element.className = 'text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-colors';
   renderConversationList();
 }
 
-function toggleMobileActions() { document.getElementById('mobileActionOverlay').classList.toggle('hidden'); }
-function setActiveFilter(f, el) {
-  currentFilter = f;
-  document.querySelectorAll('[data-filter]').forEach(b => b.className = 'text-on-surface-variant pb-2 text-[13px] whitespace-nowrap hover:text-primary');
-  el.className = 'text-primary font-bold border-b-2 border-primary pb-2 text-[13px] whitespace-nowrap';
-  renderConversationList();
-}
 function filterConversations() {
   searchQuery = document.getElementById('searchConvo').value.trim().toLowerCase();
   renderConversationList();
 }
+
 function updateStatsUI() {
-  const list = Array.from(conversationsMap.values());
-  document.getElementById('statTotal').textContent = list.length;
-  document.getElementById('statAi').textContent = list.filter(c => c.status === 'ai').length;
-  document.getElementById('statEsc').textContent = list.filter(c => c.status === 'escalated').length;
-  document.getElementById('statDone').textContent = list.filter(c => c.status === 'done').length;
+  let all = Array.from(conversationsMap.values());
+  document.getElementById('statTotal').textContent = all.length;
+  document.getElementById('statAi').textContent = all.filter(c => c.status === 'ai').length;
+  document.getElementById('statEsc').textContent = all.filter(c => c.status === 'escalated').length;
+  document.getElementById('statDone').textContent = all.filter(c => c.status === 'done').length;
 }
-function showToast(m) {
-  const t = document.getElementById('globalToast');
-  t.textContent = m;
-  t.classList.add('opacity-100', 'translate-y-0');
-  setTimeout(() => t.classList.remove('opacity-100', 'translate-y-0'), 3000);
+
+function showToast(msg) {
+  let toast = document.getElementById('globalToast');
+  toast.textContent = msg;
+  toast.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => toast.classList.remove('opacity-100', 'translate-y-0'), 3000);
 }
+
 function handleReplyKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendStaffReply(); } }
-function escapeHtml(s) { return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function escapeHtml(str) { return String(str || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]); }
 function formatTime(ts) {
-  const d = new Date(ts);
-  const now = new Date();
-  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
-  return d.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+  let d = new Date(ts);
+  let now = new Date();
+  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 
 connectWebSocket();
