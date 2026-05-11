@@ -5,10 +5,10 @@ const path = require('path');
 const DB_PATH = path.resolve(__dirname, '../data/knowledge.db');
 const db = new Database(DB_PATH);
 
-console.log('Menghapus data tentang pacar admin dari database...');
+console.log('Menghapus data internal dari database...');
 
-// Hapus data dengan topik "Info Admin"
-const result = db.prepare("DELETE FROM knowledge WHERE topik = 'Info Admin'").run();
+// Hapus data dengan topik "Info Internal"
+const result = db.prepare("DELETE FROM knowledge WHERE topik = 'Info Internal'").run();
 
 console.log(`✓ Berhasil menghapus ${result.changes} baris data`);
 

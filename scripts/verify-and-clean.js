@@ -18,13 +18,13 @@ before.forEach(row => {
   console.log('---');
 });
 
-// Hapus berdasarkan ID jika ada
-console.log('\n=== MENGHAPUS DATA ===');
+// Hapus berdasarkan ID jika ada (Generic keywords)
+console.log('\n=== MENGHAPUS DATA SENSITIF ===');
+const keywords = ['internal', 'rahasia', 'private'];
 const idsToDelete = before
   .filter(row => 
-    row.topik.toLowerCase().includes('admin') || 
-    row.konten.toLowerCase().includes('eldina') ||
-    row.konten.toLowerCase().includes('pacar')
+    keywords.some(k => row.topik.toLowerCase().includes(k)) || 
+    keywords.some(k => row.konten.toLowerCase().includes(k))
   )
   .map(row => row.id);
 
@@ -35,7 +35,7 @@ if (idsToDelete.length > 0) {
     console.log(`✓ Dihapus ID ${id}`);
   });
 } else {
-  console.log('Tidak ada data yang perlu dihapus');
+  console.log('Tidak ada data sensitif yang perlu dihapus');
 }
 
 // Vacuum database untuk membersihkan ruang

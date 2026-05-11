@@ -11,24 +11,29 @@ console.log('Memeriksa data di database...');
 const allData = db.prepare("SELECT * FROM knowledge").all();
 console.log(`Total data: ${allData.length}`);
 
-// Tampilkan data yang akan dihapus
-const toDelete = db.prepare("SELECT * FROM knowledge WHERE topik LIKE '%Admin%' OR konten LIKE '%Eldina%' OR konten LIKE '%pacar%'").all();
-console.log(`\nData yang akan dihapus: ${toDelete.length}`);
+// Tampilkan data yang akan dihapus (Generic keywords)
+const keywords = ['Internal', 'Rahasia', 'Private'];
+const placeholders = keywords.map(() => "(topik LIKE ? OR konten LIKE ?)").join(' OR ');
+const params = [];
+keywords.forEach(k => {
+  params.push(`%${k}%`, `%${k}%`);
+});
+
+const toDelete = db.prepare(`SELECT * FROM knowledge WHERE ${placeholders}`).all(...params);
+console.log(`\nData sensitif yang ditemukan: ${toDelete.length}`);
 toDelete.forEach(row => {
   console.log(`- ID: ${row.id}, Topik: ${row.topik}`);
 });
 
 // Hapus data
-console.log('\nMenghapus data...');
-const result1 = db.prepare("DELETE FROM knowledge WHERE topik LIKE '%Admin%'").run();
-const result2 = db.prepare("DELETE FROM knowledge WHERE konten LIKE '%Eldina%'").run();
-const result3 = db.prepare("DELETE FROM knowledge WHERE konten LIKE '%pacar%'").run();
+console.log('\nMenghapus data sensitif...');
+let totalChanges = 0;
+keywords.forEach(k => {
+  const res = db.prepare("DELETE FROM knowledge WHERE topik LIKE ? OR konten LIKE ?").run(`%${k}%`, `%${k}%`);
+  totalChanges += res.changes;
+});
 
-console.log(`✓ Berhasil menghapus total ${result1.changes + result2.changes + result3.changes} baris`);
-
-// Verifikasi
-const remaining = db.prepare("SELECT * FROM knowledge WHERE topik LIKE '%Admin%' OR konten LIKE '%Eldina%' OR konten LIKE '%pacar%'").all();
-console.log(`\nData tersisa yang mengandung kata kunci: ${remaining.length}`);
+console.log(`✓ Berhasil menghapus total ${totalChanges} baris`);
 
 db.close();
 console.log('\n✓ Selesai!');
