@@ -134,12 +134,12 @@
   }
 </style>
 </head>
-<body class="bg-background text-on-surface h-screen overflow-hidden flex">
+<body class="bg-background text-on-surface h-screen overflow-hidden flex flex-col md:flex-row">
 
-<!-- SideNavBar -->
-<nav class="fixed left-0 top-0 h-full flex flex-col items-center py-4 z-50 bg-surface-container-lowest border-r border-outline-variant w-[56px]">
+<!-- Desktop SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col items-center py-4 z-50 bg-surface-container-lowest border-r border-outline-variant w-[56px]">
   <div class="mb-8">
-    <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">IT</div>
+    <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">AI</div>
   </div>
   <div class="flex flex-col gap-4">
     <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Dashboard">
@@ -147,12 +147,6 @@
     </button>
     <button class="flex items-center justify-center bg-primary-container text-on-primary-container rounded-xl w-10 h-10" title="Messages">
       <span class="material-symbols-outlined fill">chat_bubble</span>
-    </button>
-    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Tickets">
-      <span class="material-symbols-outlined">confirmation_number</span>
-    </button>
-    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Reports">
-      <span class="material-symbols-outlined">analytics</span>
     </button>
   </div>
   <div class="mt-auto flex flex-col gap-4">
@@ -165,83 +159,181 @@
   </div>
 </nav>
 
-<!-- Main Content -->
-<div class="flex-1 flex ml-[56px] h-full">
+<!-- Mobile TopBar (Hidden on Desktop) -->
+<header class="md:hidden flex items-center justify-between px-md py-3 bg-surface-container-lowest border-b border-outline-variant z-40">
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-[10px]">AI</div>
+    <h2 class="font-h3 text-h3">AI Bot Admin</h2>
+  </div>
+  <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1">
+      <span class="w-2 h-2 rounded-full bg-success" id="mobileStatusDot"></span>
+    </div>
+    <a href="/auth/logout" class="text-error p-1">
+      <span class="material-symbols-outlined text-[20px]">logout</span>
+    </a>
+  </div>
+</header>
+
+<!-- Main Content Area -->
+<div class="flex-1 flex md:ml-[56px] h-full overflow-hidden relative">
 
   <!-- Conversation List Sidebar -->
-  <aside class="w-[360px] bg-surface-container-lowest border-r border-outline-variant flex flex-col h-full flex-shrink-0">
+  <aside id="convoSidebar" class="w-full md:w-[320px] lg:w-[360px] bg-surface-container-lowest border-r border-outline-variant flex flex-col h-full flex-shrink-0 z-30 transition-transform duration-300">
     <div class="p-md border-b border-outline-variant">
       <div class="flex items-center justify-between mb-md">
         <h2 class="font-h2 text-h2 text-on-surface">Percakapan</h2>
-        <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-success animate-pulse" id="statusDot"></span>
-          <span class="font-label-sm text-label-sm text-on-surface-variant" id="statusText">Menghubungkan...</span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant" id="statusText">Sync...</span>
         </div>
       </div>
       <div class="relative">
         <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
         <input class="w-full bg-surface-container border-none rounded-xl pl-[36px] pr-sm py-2.5 text-body-md focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all outline-none" placeholder="Cari percakapan..." type="text" id="searchConvo" oninput="filterConversations()">
       </div>
-      <div class="flex gap-lg mt-md">
-        <button class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-colors" data-filter="all" onclick="setActiveFilter('all', this)">Semua</button>
-        <button class="text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors" data-filter="escalated" onclick="setActiveFilter('escalated', this)">Eskalasi</button>
-        <button class="text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors" data-filter="done" onclick="setActiveFilter('done', this)">Selesai</button>
+      <div class="flex gap-lg mt-md overflow-x-auto scrollbar-hide">
+        <button class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-colors whitespace-nowrap" data-filter="all" onclick="setActiveFilter('all', this)">Semua</button>
+        <button class="text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors whitespace-nowrap" data-filter="escalated" onclick="setActiveFilter('escalated', this)">Eskalasi</button>
+        <button class="text-on-surface-variant pb-2 font-label-md text-label-md hover:text-primary transition-colors whitespace-nowrap" data-filter="done" onclick="setActiveFilter('done', this)">Selesai</button>
       </div>
     </div>
 
     <div class="flex-1 overflow-y-auto scrollbar-thin" id="conversationList">
       <div class="flex flex-col items-center justify-center h-full text-on-surface-variant gap-3">
         <span class="material-symbols-outlined text-[48px] opacity-30">chat_bubble</span>
-        <p class="font-body-md">Hubungkan ke server untuk memuat chat</p>
+        <p class="font-body-md">Memuat chat...</p>
       </div>
     </div>
 
-    <div class="p-md border-t border-outline-variant bg-surface-container-lowest">
+    <div class="p-md border-t border-outline-variant bg-surface-container-lowest hidden md:block">
       <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-        <span>Total Percakapan</span>
+        <span>Total Chat</span>
         <span class="font-bold text-on-surface text-h3" id="statTotal">0</span>
-      </div>
-      <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant mt-1">
-        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-warning"></span> Eskalasi</span>
-        <span class="font-bold text-on-surface" id="statEsc">0</span>
-      </div>
-      <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant mt-1">
-        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-success"></span> Selesai</span>
-        <span class="font-bold text-on-surface" id="statDone">0</span>
       </div>
     </div>
   </aside>
 
   <!-- Chat Panel -->
-  <main class="flex-1 flex flex-col h-full bg-surface-container-lowest">
+  <main id="chatPanel" class="absolute inset-0 md:relative md:flex flex-1 flex flex-col h-full bg-surface-container-lowest z-40 translate-x-full md:translate-x-0 transition-transform duration-300">
 
     <!-- Chat Header -->
-    <header class="flex justify-between items-center w-full px-lg py-md bg-surface-container-lowest border-b border-outline-variant flex-shrink-0">
+    <header class="flex justify-between items-center w-full px-md md:px-lg py-md bg-surface-container-lowest border-b border-outline-variant flex-shrink-0">
       <div class="flex items-center gap-md" id="chatHeaderInfo">
-        <div class="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center text-on-surface font-bold text-body-lg" id="chatAvatar">-</div>
-        <div>
-          <h1 class="font-h3 text-h3 text-on-surface flex items-center gap-sm" id="chatName">Pilih Percakapan</h1>
-          <p class="font-body-md text-body-md text-on-surface-variant" id="chatStatusMeta">Belum ada percakapan dipilih</p>
+        <button class="md:hidden p-1 -ml-1 text-on-surface-variant" onclick="closeChatMobile()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-surface-container flex items-center justify-center text-on-surface font-bold text-body-md md:text-body-lg" id="chatAvatar">-</div>
+        <div class="min-w-0">
+          <h1 class="font-h3 text-h3 text-on-surface flex items-center gap-sm truncate" id="chatName">Pilih Percakapan</h1>
+          <p class="font-label-sm text-label-sm text-on-surface-variant truncate" id="chatStatusMeta">Pilih chat di sebelah kiri</p>
         </div>
       </div>
-      <div class="flex items-center gap-sm" id="actionButtons" style="display: none;">
-        <div class="flex items-center gap-1.5 mr-md" id="serverConfigArea">
-          <input class="w-[180px] bg-surface-container border border-outline-variant rounded-lg px-sm py-1.5 text-body-md focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest outline-none transition-all" type="text" id="serverInput" value="http://localhost:3000" placeholder="Server URL">
-          <button class="px-3 py-1.5 bg-primary-container text-on-primary-container rounded-lg font-label-sm text-label-sm hover:bg-primary hover:text-on-primary transition-colors flex items-center gap-1" onclick="connectWebSocket()">
-            <span class="material-symbols-outlined text-[16px]">sync</span> Sync
+      
+      <!-- Action Menu (Dropdown on Mobile, Row on Desktop) -->
+      <div class="flex items-center gap-sm">
+        <div class="hidden lg:flex items-center gap-sm" id="actionButtons" style="display: none;">
+          <button class="p-2 border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container-high" title="Ke AI" onclick="updateConversationStatus('ai')">
+            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+          </button>
+          <button class="p-2 border border-outline-variant rounded-lg text-on-surface-variant hover:bg-warning/20 hover:text-warning" title="Eskalasi" onclick="updateConversationStatus('escalated')">
+            <span class="material-symbols-outlined text-[20px]">escalator_warning</span>
+          </button>
+          <button class="px-4 py-2 bg-primary rounded-lg font-label-md text-label-md text-on-primary hover:bg-on-primary-fixed-variant shadow-sm" onclick="updateConversationStatus('done')">
+            Selesai
           </button>
         </div>
-        <button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-1.5" onclick="updateConversationStatus('ai')">
-          <span class="material-symbols-outlined text-[18px]">smart_toy</span> Ke AI
-        </button>
-        <button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-warning hover:text-white hover:border-warning transition-colors flex items-center gap-1.5" onclick="updateConversationStatus('escalated')">
-          <span class="material-symbols-outlined text-[18px]">escalator_warning</span> Eskalasi
-        </button>
-        <button class="px-4 py-2 bg-primary rounded-lg font-label-md text-label-md text-on-primary hover:bg-on-primary-fixed-variant transition-colors shadow-sm flex items-center gap-1.5" onclick="updateConversationStatus('done')">
-          <span class="material-symbols-outlined text-[18px]">check_circle</span> Selesaikan
+        
+        <!-- Mobile Action Trigger -->
+        <button class="lg:hidden p-2 text-on-surface-variant" onclick="toggleMobileActions()" id="mobileActionBtn" style="display: none;">
+          <span class="material-symbols-outlined">more_vert</span>
         </button>
       </div>
     </header>
+
+    <!-- Mobile Action Menu Overlay -->
+    <div id="mobileActionOverlay" class="hidden fixed inset-0 bg-black/20 z-[60]" onclick="toggleMobileActions()">
+      <div class="absolute bottom-0 left-0 w-full bg-surface-container-lowest rounded-t-3xl p-md flex flex-col gap-2 animate-slide-up" onclick="event.stopPropagation()">
+        <div class="w-12 h-1.5 bg-outline-variant rounded-full self-center mb-4"></div>
+        <button class="flex items-center gap-3 p-4 hover:bg-surface-container-high rounded-2xl text-on-surface" onclick="updateConversationStatus('ai'); toggleMobileActions()">
+          <span class="material-symbols-outlined">smart_toy</span> Mode AI
+        </button>
+        <button class="flex items-center gap-3 p-4 hover:bg-surface-container-high rounded-2xl text-on-surface" onclick="updateConversationStatus('escalated'); toggleMobileActions()">
+          <span class="material-symbols-outlined">escalator_warning</span> Eskalasi ke Staf
+        </button>
+        <button class="flex items-center gap-3 p-4 hover:bg-primary/10 rounded-2xl text-primary font-bold" onclick="updateConversationStatus('done'); toggleMobileActions()">
+          <span class="material-symbols-outlined">check_circle</span> Tandai Selesai
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="flex-1 overflow-y-auto p-md md:p-lg bg-surface scrollbar-thin flex flex-col gap-md md:gap-lg" id="chatMessagesArea">
+      <!-- Empty State -->
+      <div class="flex-1 flex flex-col items-center justify-center text-on-surface-variant gap-4" id="emptyChatState">
+        <span class="material-symbols-outlined text-[56px] text-primary opacity-20">forum</span>
+        <h2 class="font-h2 text-h2 text-on-surface">Pilih Percakapan</h2>
+      </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="p-md md:p-lg bg-surface-container-lowest border-t border-outline-variant flex-shrink-0">
+      <div class="flex items-end gap-2 bg-surface-container border border-outline-variant rounded-2xl focus-within:border-primary focus-within:bg-surface-container-lowest transition-all p-1.5 md:p-2">
+        <textarea class="chat-input flex-1 bg-transparent border-none focus:ring-0 resize-none font-body-md text-body-md text-on-surface p-2 max-h-[100px] md:max-h-[120px] outline-none" id="staffReplyInput" placeholder="Ketik pesan..." rows="1" onkeydown="handleReplyKeydown(event)" disabled></textarea>
+        <button class="p-2.5 bg-primary text-on-primary rounded-xl hover:bg-on-primary-fixed-variant transition-colors shadow-sm disabled:opacity-50" id="sendButton" onclick="sendStaffReply()" disabled>
+          <span class="material-symbols-outlined">send</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- Global Toast -->
+<div class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-6 py-3 rounded-xl font-label-md text-label-md shadow-xl opacity-0 translate-y-5 transition-all duration-300 pointer-events-none z-[100]" id="globalToast"></div>
+
+<style>
+  @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .animate-slide-up { animation: slide-up 0.3s ease-out; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<script>
+// --- Responsive Logic ---
+function selectConversation(phone) {
+  activePhoneKey = phone;
+  
+  // Mobile: Switch view to Chat Panel
+  if (window.innerWidth < 768) {
+    document.getElementById('chatPanel').classList.remove('translate-x-full');
+  }
+
+  renderConversationList();
+  renderChatHeader();
+  renderChatMessages();
+  
+  document.getElementById('staffReplyInput').disabled = false;
+  document.getElementById('sendButton').disabled = false;
+  document.getElementById('actionButtons').style.display = 'flex';
+  document.getElementById('mobileActionBtn').style.display = 'block';
+  
+  let empty = document.getElementById('emptyChatState');
+  if (empty) empty.style.display = 'none';
+}
+
+function closeChatMobile() {
+  document.getElementById('chatPanel').classList.add('translate-x-full');
+  activePhoneKey = null;
+  renderConversationList();
+}
+
+function toggleMobileActions() {
+  const overlay = document.getElementById('mobileActionOverlay');
+  overlay.classList.toggle('hidden');
+}
+
+// --- Rest of the Existing JS Functions (keeping them intact) ---
 
     <!-- Chat Messages -->
     <div class="flex-1 overflow-y-auto p-lg bg-surface scrollbar-thin flex flex-col gap-lg" id="chatMessagesArea">
