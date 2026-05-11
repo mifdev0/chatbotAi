@@ -380,7 +380,8 @@ let currentFilter = 'all';
 let searchQuery = '';
 
 function getApiBase() {
-  return document.getElementById('serverInput').value.trim().replace(/\/$/, '');
+  // Gunakan lokasi window saat ini agar otomatis benar di lokal maupun server
+  return window.location.origin;
 }
 
 function connectWebSocket() {
@@ -388,12 +389,15 @@ function connectWebSocket() {
     try { socket.close(); } catch (e) {}
   }
 
-  let base = getApiBase();
-  let wsProtocol = base.startsWith('https') ? 'wss://' : 'ws://';
-  let wsUrl = wsProtocol + base.split('://')[1];
+  const base = getApiBase();
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const wsUrl = wsProtocol + window.location.host;
+
+  console.log('[WS] Menghubungkan ke:', wsUrl);
 
   socket = new WebSocket(wsUrl);
   socket.onopen = function() {
+    console.log('[WS] Terhubung!');
     updateConnectionUI(true, 'Terhubung');
     showToast('Dashboard terhubung');
   };
