@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const config = require('../config/env');
 const db = require('../database/conversations');
-const { askGroq } = require('../services/ai');
+const { askAI } = require('../services/ai');
 const { sendMessage } = require('../services/whatsapp');
 const { retrieve } = require('../services/retriever');
 const { buildMenuText, getMenuItem, isValidMenuChoice } = require('../utils/menu');
@@ -15,30 +15,24 @@ router.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 
   try {
-    const { event, data } = req.body;
-    if (event !== 'message' && event !== 'message_create') return;
-
-    const message = data?.message;
-    if (!message || message.fromMe) return;
+    // Format Fonnte webhook
+    const { device, message, pushname } = req.body;
+    if (!message || device === 'sender') return; // Skip pesan dari bot sendiri
 
     // Deduplikasi
-    const msgId = message.id?._serialized || message.id;
+    const msgId = req.body.id;
     if (msgId && processedIds.has(msgId)) return;
     if (msgId) {
       processedIds.add(msgId);
       setTimeout(() => processedIds.delete(msgId), 60000);
     }
 
-    // Hanya proses teks
-    if (message.type !== 'chat') return;
-    const userText = message.body?.trim();
+    const userText = message.trim();
     if (!userText) return;
 
     // Ambil nomor & nama
-    const rawFrom = message.from || '';
-    const phone = rawFrom.replace('@c.us', '').replace('@lid', '');
-    const chatId = config.waapi.trialChatId; // Trial WaAPI
-    const name = message.notifyName || phone;
+    const phone = req.body.sender || '';
+    const name = pushname || phone;
 
     console.log(`[IN] ${name} (${phone}): ${userText}`);
 
@@ -68,85 +62,62 @@ router.post('/webhook', async (req, res) => {
     // Tentukan state percakapan
     const menuState = convo.menuState || 'idle';
     const selectedTopic = convo.selectedTopic || null;
+    const userLower = userText.trim().toLowerCase();
 
     let replyText = '';
 
-    // STATE: IDLE — belum pilih menu
-    if (menuState === 'idle') {
-      if (!isValidMenuChoice(userText)) {
+    // LOGIC: Jika user input angka (Pilih Menu)
+    if (isValidMenuChoice(userText)) {
+      const num = parseInt(userText.trim(), 10);
+      const chosen = getMenuItem(num);
+
+      // Pilihan terakhir = eskalasi manual
+      if (chosen.topik === null) {
+        replyText =
+          `Baik Sobat IT Helpdesk! Saya akan menghubungkan Anda dengan tim IT Helpdesk kami.\n` +
+          `Mohon tunggu sebentar, staf kami akan segera merespons. 🙏`;
+        db.addMessage(phone, 'ai', replyText);
+        db.updateStatus(phone, 'escalated');
+        broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
+        broadcast('status_change', { phone, status: 'escalated' });
+        console.log(`[ESKALASI MANUAL] ${name} (${phone})`);
+        await sendMessage(phone, replyText);
+        return;
+      }
+
+      // Topik valid → Set state & Jawab via AI
+      console.log(`[MENU] ${name} pilih: "${chosen.label}"`);
+      db.setMenuState(phone, 'topic_selected', chosen.topik);
+
+      const context = retrieve(chosen.topik);
+      convo = db.getConversation(phone);
+      replyText = await askAI(convo.messages, context);
+    } 
+    // Jika user minta menu secara eksplisit
+    else if (['menu', 'bantuan', 'pilihan', 'help'].includes(userLower)) {
+      db.resetMenuState(phone);
+      replyText = buildMenuText();
+    }
+    // Percakapan Natural (Bukan angka, bukan kata kunci menu)
+    else {
+      // Selalu coba cari context relevan
+      const context = retrieve(selectedTopic || userText);
+      
+      // Jika baru pertama kali (IDLE) DAN tidak ada info relevan di DB -> Kasih Menu
+      if (menuState === 'idle' && convo.messages.length <= 1 && !context) {
+        console.log(`[MENU] Kirim menu karena pesan pertama dari ${name} dan tidak ada context relevan`);
         replyText = buildMenuText();
       } else {
-        const num = parseInt(userText.trim(), 10);
-        const chosen = getMenuItem(num);
-
-        // Pilihan terakhir = eskalasi manual
-        if (chosen.topik === null) {
-          replyText =
-            `Baik Sobat IT Helpdesk! Saya akan menghubungkan Anda dengan tim IT Helpdesk kami.\n` +
-            `Mohon tunggu sebentar, staf kami akan segera merespons. 🙏`;
-          db.addMessage(phone, 'ai', replyText);
-          db.updateStatus(phone, 'escalated');
-          broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
-          broadcast('status_change', { phone, status: 'escalated' });
-          console.log(`[ESKALASI MANUAL] ${name} (${phone})`);
-          await sendMessage(chatId, replyText);
-          return;
-        }
-
-        // Topik valid → retrieve & AI
-        console.log(`[MENU] ${name} pilih: "${chosen.label}"`);
-        db.setMenuState(phone, 'topic_selected', chosen.topik);
-
-        const context = retrieve(chosen.topik);
-        console.log(`[GROQ] Memanggil Groq untuk topik: ${chosen.topik}`);
-
-        replyText = await askGroq(convo.messages, context);
+        // Lanjut percakapan dengan AI (pakai context jika ada)
+        console.log(`[AI] Memproses pesan natural dari ${name} (Context: ${context ? 'Found' : 'None'})`);
+        replyText = await askAI(convo.messages, context);
       }
     }
 
-    // STATE: TOPIC_SELECTED — dalam percakapan topik
-    else if (menuState === 'topic_selected') {
-      const userLower = userText.trim().toLowerCase();
-
-      // User ganti topik
-      if (isValidMenuChoice(userText)) {
-        const num = parseInt(userText.trim(), 10);
-        const chosen = getMenuItem(num);
-
-        if (chosen.topik === null) {
-          replyText =
-            `Baik Sobat IT Helpdesk! Saya akan menghubungkan Anda dengan tim IT Helpdesk kami.\n` +
-            `Mohon tunggu sebentar, staf kami akan segera merespons. 🙏`;
-          db.addMessage(phone, 'ai', replyText);
-          db.updateStatus(phone, 'escalated');
-          broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
-          broadcast('status_change', { phone, status: 'escalated' });
-          console.log(`[ESKALASI MANUAL] ${name} (${phone})`);
-          await sendMessage(chatId, replyText);
-          return;
-        }
-
-        db.setMenuState(phone, 'topic_selected', chosen.topik);
-        const context = retrieve(chosen.topik);
-        convo = db.getConversation(phone);
-        replyText = await askGroq(convo.messages, context);
-
-      } else if (['menu', 'kembali', 'back', 'pilih lagi', 'ganti'].includes(userLower)) {
-        // Kembali ke menu
-        db.resetMenuState(phone);
-        replyText = buildMenuText();
-
-      } else {
-        // Lanjut percakapan
-        const context = retrieve(selectedTopic || userText);
-        convo = db.getConversation(phone);
-        replyText = await askGroq(convo.messages, context);
-      }
-    }
 
     if (!replyText) return;
 
-    console.log(`[GROQ] Balasan: ${replyText.substring(0, 80)}...`);
+    console.log(`[AI] Balasan: ${replyText.substring(0, 80)}...`);
     db.addMessage(phone, 'ai', replyText);
     broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
 
@@ -167,7 +138,7 @@ router.post('/webhook', async (req, res) => {
       console.log(`[SELESAI] ${name} (${phone})`);
     }
 
-    await sendMessage(chatId, replyText);
+    await sendMessage(phone, replyText);
     console.log(`[OUT] AI → ${name}: ${replyText.substring(0, 60)}...`);
 
   } catch (err) {

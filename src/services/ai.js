@@ -31,7 +31,7 @@ Jawab HANYA dalam Bahasa Indonesia. Jawaban singkat dan to the point.
 === FORMAT ESKALASI (gunakan PERSIS ini jika tidak ada solusi) ===
 "Sobat IT Helpdesk, saat ini saya belum memiliki informasi yang cukup untuk permasalahan tersebut. Agar dapat ditangani lebih tepat, saya akan menghubungkan Sobat IT Helpdesk dengan tim kami."`;
 
-async function askGroq(messages, topicContext) {
+async function askAI(messages, topicContext) {
   // Gunakan context dari topik yang dipilih user (dari menu)
   // Jika tidak ada (lanjutan percakapan), retrieve otomatis
   let context = topicContext || null;
@@ -59,9 +59,9 @@ async function askGroq(messages, topicContext) {
     .slice(-6);
 
   const response = await axios.post(
-    'https://api.groq.com/openai/v1/chat/completions',
+    `${config.ai.baseUrl}/v1/chat/completions`,
     {
-      model: config.groq.model,
+      model: config.ai.model,
       messages: [
         { role: 'system', content: systemPrompt },
         ...recentMessages.map(m => ({
@@ -69,12 +69,12 @@ async function askGroq(messages, topicContext) {
           content: m.text
         }))
       ],
-      temperature: config.groq.temperature,
-      max_tokens: config.groq.maxTokens
+      temperature: config.ai.temperature,
+      max_tokens: config.ai.maxTokens
     },
     {
       headers: {
-        Authorization: `Bearer ${config.groq.apiKey}`,
+        Authorization: `Bearer ${config.ai.apiKey}`,
         'Content-Type': 'application/json'
       }
     }
@@ -83,4 +83,4 @@ async function askGroq(messages, topicContext) {
   return response.data.choices[0].message.content;
 }
 
-module.exports = { askGroq };
+module.exports = { askAI };

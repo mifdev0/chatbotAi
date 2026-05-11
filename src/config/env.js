@@ -4,21 +4,19 @@ const config = {
   // Server
   port: process.env.PORT || 3000,
 
-  // Groq API
-  groq: {
-    apiKey: process.env.GROQ_API_KEY,
-    model: 'llama-3.1-8b-instant',
+  // AI API (DeepSeek)
+  ai: {
+    apiKey: process.env.AI_API_KEY,
+    baseUrl: process.env.AI_BASE_URL || 'https://api.deepseek.com',
+    model: process.env.AI_MODEL || 'deepseek-v4-pro',
     temperature: 0.2,
     maxTokens: 400,
   },
 
-  // WaAPI
-  waapi: {
-    token: process.env.WAAPI_TOKEN,
-    instanceId: process.env.WAAPI_INSTANCE_ID,
-    baseUrl: 'https://waapi.app/api/v1',
-    // Trial WaAPI: hanya bisa balas ke nomor terdaftar
-    trialChatId: '6281354496995@c.us',
+  // Fonnte
+  fonnte: {
+    token: process.env.FONNTE_TOKEN,
+    baseUrl: 'https://api.fonnte.com',
   },
 
   // Database
@@ -31,9 +29,8 @@ const config = {
 // Validasi required env vars
 function validateConfig() {
   const required = [
-    'groq.apiKey',
-    'waapi.token',
-    'waapi.instanceId',
+    'ai.apiKey',
+    'fonnte.token',
   ];
 
   const missing = [];

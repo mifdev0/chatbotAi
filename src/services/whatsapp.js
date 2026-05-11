@@ -1,31 +1,42 @@
 const axios = require('axios');
 const config = require('../config/env');
 
-async function sendMessage(chatId, message) {
-  const { instanceId, token, baseUrl } = config.waapi;
+async function sendMessage(phone, message) {
+  const { token, baseUrl } = config.fonnte;
 
-  // Pastikan format chatId benar
-  const formattedChatId = chatId.includes('@') ? chatId : `${chatId}@c.us`;
+  // Fonnte pakai nomor tanpa @c.us
+  const target = phone.replace('@c.us', '').replace('@lid', '');
 
-  try {
-    const response = await axios.post(
-      `${baseUrl}/instances/${instanceId}/client/action/send-message`,
-      {
-        chatId: formattedChatId,
-        message,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error('[WaAPI] Gagal kirim pesan:', err.response?.status, JSON.stringify(err.response?.data));
-    throw err;
+  const payload = {
+    target,
+    message,
+    countryCode: '62',
+  };
+
+  console.log(`[Fonnte] Kirim ke ${target}...`);
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/send`,
+        payload,
+        {
+          headers: {
+            Authorization: token,
+          },
+          timeout: 10000,
+        }
+      );
+      console.log(`[Fonnte] Berhasil: ${JSON.stringify(response.data)}`);
+      return response.data;
+    } catch (err) {
+      const status = err.response?.status;
+      const data = err.response?.data;
+      console.error(`[Fonnte] Attempt ${attempt} gagal:`, status, JSON.stringify(data), err.code);
+      
+      if (attempt === 3) throw err;
+      await new Promise(r => setTimeout(r, 1000 * attempt));
+    }
   }
 }
 

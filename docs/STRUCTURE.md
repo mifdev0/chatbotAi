@@ -55,8 +55,8 @@ wabot-helpdesk-ums/
 - **Purpose**: Centralized configuration
 - **Exports**:
   - `config.port` - Server port
-  - `config.groq` - Groq API settings
-  - `config.waapi` - WaAPI settings
+  - `config.ai` - AI API settings (DeepSeek)
+  - `config.fonnte` - Fonnte API settings
   - `config.database` - Database paths
 - **Features**:
   - Load & validate environment variables
@@ -110,9 +110,9 @@ wabot-helpdesk-ums/
 ### **src/services/**
 
 #### `ai.js`
-- **Purpose**: Groq AI integration
+- **Purpose**: DeepSeek AI integration
 - **Functions**:
-  - `askGroq(messages, topicContext)` - Get AI response
+  - `askAI(messages, topicContext)` - Get AI response
 - **Features**:
   - System prompt injection
   - Context from knowledge base
@@ -121,13 +121,13 @@ wabot-helpdesk-ums/
   - Auto-escalation if no context
 
 #### `whatsapp.js`
-- **Purpose**: WaAPI integration
+- **Purpose**: Fonnte integration
 - **Functions**:
-  - `sendMessage(chatId, message)` - Send WhatsApp message
+  - `sendMessage(target, message)` - Send WhatsApp message
 - **Features**:
-  - Auto-format chatId
+  - Auto-format target
   - Error handling
-  - Bearer token auth
+  - API token auth
 
 #### `retriever.js`
 - **Purpose**: Knowledge retrieval (TF-IDF)
@@ -222,7 +222,7 @@ wabot-helpdesk-ums/
 ### **Incoming Message Flow**
 
 ```
-WhatsApp → WaAPI → POST /webhook
+WhatsApp → Fonnte → POST /webhook
   ↓
 webhook.js (validate, deduplicate)
   ↓
@@ -232,7 +232,7 @@ menu.js (check menu state)
   ↓
 retriever.js (get knowledge)
   ↓
-ai.js (call Groq API)
+ai.js (call DeepSeek API)
   ↓
 whatsapp.js (send response)
   ↓
@@ -285,7 +285,7 @@ broadcast.js (update all clients)
 
 ### **4. Modularity**
 - Each module can be replaced independently
-- Example: Swap Groq with OpenAI → only edit `services/ai.js`
+- Example: Swap DeepSeek with OpenAI → only edit `services/ai.js`
 
 ### **5. Scalability**
 - Easy to add new routes

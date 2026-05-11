@@ -45,7 +45,7 @@ Run `npm run migrate` to migrate existing data from `data.json` to SQLite.
 ## [2.0.0] - Previous Version
 
 ### Features
-- WhatsApp Bot with AI (Groq)
+- WhatsApp Bot with AI (DeepSeek)
 - Menu-based navigation
 - Knowledge base with TF-IDF retrieval
 - Real-time dashboard

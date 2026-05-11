@@ -1,6 +1,6 @@
 # 🤖 WhatsApp Bot IT Helpdesk UMS
 
-Bot WhatsApp otomatis berbasis AI untuk IT Helpdesk UMS menggunakan **WaAPI** + **Groq AI** + **Dashboard Real-time**.
+Bot WhatsApp otomatis berbasis AI untuk IT Helpdesk UMS menggunakan **Fonnte** + **DeepSeek AI** + **Dashboard Real-time**.
 
 ## 📋 Quick Start
 
@@ -32,8 +32,8 @@ wabot-helpdesk-ums/
 │   │   └── migrations/
 │   │       └── migrate-to-sqlite.js
 │   ├── services/
-│   │   ├── ai.js               # Groq AI service
-│   │   ├── whatsapp.js         # WaAPI service
+│   │   ├── ai.js               # AI service (DeepSeek)
+│   │   ├── whatsapp.js         # WhatsApp service (Fonnte)
 │   │   └── retriever.js        # Knowledge retrieval (TF-IDF)
 │   ├── routes/
 │   │   ├── webhook.js          # Webhook routes
@@ -63,15 +63,15 @@ wabot-helpdesk-ums/
 ## 🛠️ Tech Stack
 
 - **Backend**: Node.js + Express.js
-- **AI**: Groq API (Llama 3.1 8B Instant)
+- **AI**: DeepSeek API (v4 Pro)
 - **NLP**: Natural.js (TF-IDF)
 - **Database**: SQLite (better-sqlite3)
 - **Real-time**: WebSocket (ws)
-- **WhatsApp API**: WaAPI
+- **WhatsApp API**: Fonnte
 
 ## ✨ Features
 
-- ✅ AI-powered responses dengan Groq
+- ✅ AI-powered responses dengan DeepSeek
 - ✅ Knowledge base dengan TF-IDF retrieval
 - ✅ Menu interaktif (8 topik)
 - ✅ Dashboard real-time monitoring

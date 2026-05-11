@@ -5,7 +5,7 @@
 
 ## 🎯 Deskripsi Project
 
-Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (Groq) untuk menjawab pertanyaan mahasiswa/dosen tentang masalah IT kampus. Bot ini dilengkapi dengan dashboard web untuk monitoring dan eskalasi manual oleh staf IT.
+Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (DeepSeek) untuk menjawab pertanyaan mahasiswa/dosen tentang masalah IT kampus. Bot ini dilengkapi dengan dashboard web untuk monitoring dan eskalasi manual oleh staf IT.
 
 ---
 
@@ -17,7 +17,7 @@ Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (Groq) untuk men
 - **WebSocket (ws)** - Real-time communication untuk dashboard
 
 ### **AI & NLP**
-- **Groq API** - LLM (Large Language Model) menggunakan Llama 3.1 8B Instant
+- **DeepSeek API** - LLM (Large Language Model) menggunakan DeepSeek-v4-pro
 - **Natural.js** - Library NLP untuk TF-IDF retrieval dan tokenization
 
 ### **Database**
@@ -25,7 +25,7 @@ Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (Groq) untuk men
 - **JSON File (data.json)** - Penyimpanan percakapan dan state
 
 ### **External APIs**
-- **WaAPI** - WhatsApp API untuk mengirim/menerima pesan
+- **Fonnte** - WhatsApp API untuk mengirim/menerima pesan
 - **Axios** - HTTP client untuk API calls
 
 ### **Development Tools**
@@ -40,8 +40,8 @@ Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (Groq) untuk men
 wabot-helpdesk-ums/
 │
 ├── index.js              # Server utama + webhook handler + REST API
-├── groq.js               # Integrasi Groq AI + system prompt
-├── waapi.js              # Integrasi WaAPI untuk kirim pesan WA
+├── ai.js                 # Integrasi DeepSeek AI + system prompt
+├── whatsapp.js           # Integrasi Fonnte untuk kirim pesan WA
 ├── retriever.js          # TF-IDF retrieval untuk knowledge base
 ├── db.js                 # Database handler untuk percakapan (JSON)
 ├── knowledge-db.js       # Database handler untuk knowledge base (SQLite)
@@ -69,7 +69,7 @@ wabot-helpdesk-ums/
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  WaAPI TERIMA PESAN → KIRIM KE WEBHOOK (/webhook)           │
+│  Fonnte TERIMA PESAN → KIRIM KE WEBHOOK (/webhook)           │
 └────────────────┬────────────────────────────────────────────┘
                  │
                  ▼
@@ -125,10 +125,10 @@ wabot-helpdesk-ums/
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  GROQ.JS: PROSES DENGAN AI                                  │
+│  AI.JS: PROSES DENGAN AI                                    │
 │  - Inject system prompt + knowledge context                 │
-│  - Kirim 6 pesan terakhir ke Groq API                       │
-│  - Model: llama-3.1-8b-instant                              │
+│  - Kirim 6 pesan terakhir ke DeepSeek API                   │
+│  - Model: DeepSeek-v4-pro                                   │
 │  - Temperature: 0.2 (rendah agar tidak ngelantur)           │
 └────────────────┬────────────────────────────────────────────┘
                  │
@@ -149,9 +149,9 @@ wabot-helpdesk-ums/
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  WAAPI.JS: KIRIM BALASAN KE USER                            │
-│  - Format chatId dengan benar                               │
-│  - POST ke WaAPI endpoint                                   │
+│  WHATSAPP.JS: KIRIM BALASAN KE USER                          │
+│  - Format target dengan benar                               │
+│  - POST ke Fonnte endpoint                                  │
 └────────────────┬────────────────────────────────────────────┘
                  │
                  ▼
@@ -240,7 +240,7 @@ wabot-helpdesk-ums/
 │  ├──────────────────────────────────────────────────────┤   │
 │  │ Event: status_change                                 │   │
 │  │ → Update badge status percakapan                     │   │
-│  ├──────────────────────────────────────────────────────┤   │
+├──────────────────────────────────────────────────────┤   │
 │  │ Event: escalated_message                             │   │
 │  │ → Highlight percakapan yang butuh perhatian         │   │
 │  └──────────────────────────────────────────────────────┘   │
@@ -251,7 +251,7 @@ wabot-helpdesk-ums/
 │  STAF BALAS PESAN (jika status ESCALATED)                   │
 │  - Ketik pesan di input box                                 │
 │  - POST /api/conversations/:phone/reply                     │
-│  - Pesan dikirim via WaAPI ke user                          │
+│  - Pesan dikirim via Fonnte ke user                          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -262,8 +262,8 @@ wabot-helpdesk-ums/
 ### **Prasyarat**
 - Node.js versi 14 atau lebih baru
 - npm atau yarn
-- Akun Groq API (gratis di https://console.groq.com)
-- Akun WaAPI (trial/berbayar di https://waapi.app)
+- Akun DeepSeek API (gratis di https://api.deepseek.com)
+- Akun Fonnte (trial/berbayar di https://fonnte.com)
 
 ---
 
@@ -285,22 +285,20 @@ npm install
 Buat file `.env` di root folder:
 
 ```env
-# Groq API Key (dapatkan dari https://console.groq.com)
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxx
+# DeepSeek API Key (dapatkan dari https://api.deepseek.com)
+AI_API_KEY=sk_xxxxxxxxxxxxxxxxxxxxx
 
-# WaAPI Config (dapatkan dari https://waapi.app)
-WAAPI_TOKEN=xxxxxxxxxxxxxxxxxxxxx
-WAAPI_INSTANCE_ID=xxxxx
+# Fonnte Config (dapatkan dari https://fonnte.com)
+FONNTE_TOKEN=xxxxxxxxxxxxxxxxxxxxx
 
 # Server Port
 PORT=3000
 ```
 
-**Cara mendapatkan WaAPI credentials:**
-1. Login ke https://waapi.app
+**Cara mendapatkan Fonnte credentials:**
+1. Login ke https://fonnte.com
 2. Buat instance baru → scan QR dengan WhatsApp Business
-3. Salin **Instance ID** dari dashboard
-4. Buat **API Token** di menu "User API Tokens"
+3. Buat **API Token** di menu "User API Tokens"
 
 ---
 
@@ -336,9 +334,9 @@ Salin URL ngrok (contoh: `https://abc123.ngrok-free.app`)
 
 ---
 
-### **Langkah 5: Set Webhook di WaAPI**
+### **Langkah 5: Set Webhook di Fonnte**
 
-1. Buka dashboard WaAPI → pilih instance Anda
+1. Buka dashboard Fonnte → pilih instance Anda
 2. Masuk ke menu **Webhooks**
 3. Set **Webhook URL**: `https://abc123.ngrok-free.app/webhook`
 4. Aktifkan event: **message** atau **message_create**
@@ -348,7 +346,7 @@ Salin URL ngrok (contoh: `https://abc123.ngrok-free.app`)
 
 ### **Langkah 6: Testing**
 
-1. Kirim pesan WhatsApp ke nomor yang terhubung dengan WaAPI
+1. Kirim pesan WhatsApp ke nomor yang terhubung dengan Fonnte
 2. Bot akan membalas dengan menu pilihan
 3. Pilih angka 1-8 untuk memilih topik
 4. Bot akan menjawab berdasarkan knowledge base
@@ -361,7 +359,7 @@ Salin URL ngrok (contoh: `https://abc123.ngrok-free.app`)
 ```
 POST /webhook
 ```
-Menerima webhook dari WaAPI saat ada pesan masuk.
+Menerima webhook dari Fonnte saat ada pesan masuk.
 
 ### **Get All Conversations**
 ```
@@ -411,7 +409,7 @@ User memilih topik dengan mengetik angka 1-8:
 8. Masalah lain / Chat dengan Admin IT Helpdesk
 
 ### **2. AI-Powered Responses**
-- Menggunakan Groq API (Llama 3.1 8B Instant)
+- Menggunakan DeepSeek API (DeepSeek-v4-pro)
 - Temperature rendah (0.2) untuk jawaban konsisten
 - Hanya menjawab berdasarkan knowledge base
 - Auto-eskalasi jika tidak ada informasi
@@ -473,7 +471,7 @@ INSERT INTO knowledge (topik, konten) VALUES
 
 ### **Mengubah System Prompt**
 
-Edit file `groq.js` bagian `BASE_PROMPT`:
+Edit file `ai.js` bagian `BASE_PROMPT`:
 
 ```javascript
 const BASE_PROMPT = `Kamu adalah asisten AI...
@@ -530,7 +528,7 @@ fly launch
 
 **Jangan lupa:**
 - Set environment variables di platform
-- Update webhook URL di WaAPI dengan URL production
+- Update webhook URL di Fonnte dengan URL production
 - Pastikan port sesuai dengan yang disediakan platform
 
 ---
@@ -538,18 +536,18 @@ fly launch
 ## 📝 Troubleshooting
 
 ### **Bot tidak merespons**
-- Cek webhook URL sudah benar di WaAPI
+- Cek webhook URL sudah benar di Fonnte
 - Cek server berjalan dan bisa diakses dari internet
 - Cek logs di console untuk error
 
 ### **AI menjawab tidak relevan**
 - Cek knowledge base sudah lengkap
-- Turunkan temperature di `groq.js`
+- Turunkan temperature di `ai.js`
 - Perbaiki system prompt
 
 ### **Webhook error 401/403**
-- Cek WAAPI_TOKEN dan WAAPI_INSTANCE_ID di `.env`
-- Regenerate token di dashboard WaAPI
+- Cek FONNTE_TOKEN di `.env`
+- Regenerate token di dashboard Fonnte
 
 ### **Database error**
 - Hapus `data.json` dan `knowledge.db`, restart server

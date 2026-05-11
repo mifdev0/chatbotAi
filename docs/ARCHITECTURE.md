@@ -15,7 +15,7 @@ WhatsApp Bot IT Helpdesk UMS adalah sistem chatbot berbasis AI yang menggunakan 
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      WaAPI (External)                        │
+│                      Fonnte (External)                       │
 └────────────────────────┬────────────────────────────────────┘
                          │
                          ▼ POST /webhook
@@ -29,8 +29,8 @@ WhatsApp Bot IT Helpdesk UMS adalah sistem chatbot berbasis AI yang menggunakan 
 │                        │                                     │
 │  ┌─────────────────────▼─────────────────────────────────┐  │
 │  │  Services Layer (src/services/)                       │  │
-│  │  - ai.js (Groq API integration)                       │  │
-│  │  - whatsapp.js (WaAPI integration)                    │  │
+│  │  - ai.js (DeepSeek API integration)                    │  │
+│  │  - whatsapp.js (Fonnte integration)                    │  │
 │  │  - retriever.js (TF-IDF knowledge retrieval)          │  │
 │  └─────────────────────┬─────────────────────────────────┘  │
 │                        │                                     │
@@ -44,8 +44,8 @@ WhatsApp Bot IT Helpdesk UMS adalah sistem chatbot berbasis AI yang menggunakan 
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    External Services                         │
-│  - Groq API (AI responses)                                  │
-│  - WaAPI (WhatsApp messaging)                               │
+│  - DeepSeek API (AI responses)                              │
+│  - Fonnte (WhatsApp messaging)                               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -59,7 +59,7 @@ WhatsApp Bot IT Helpdesk UMS adalah sistem chatbot berbasis AI yang menggunakan 
 User sends WhatsApp message
          │
          ▼
-WaAPI receives message
+Fonnte receives message
          │
          ▼
 POST /webhook (src/routes/webhook.js)
@@ -98,7 +98,7 @@ Retrieve Knowledge (src/services/retriever.js)
 Call AI (src/services/ai.js)
          │
          ├─→ Inject system prompt + knowledge context
-         ├─→ Send last 6 messages to Groq API
+         ├─→ Send last 6 messages to DeepSeek API
          ├─→ Get AI response
          │
          ▼
@@ -112,7 +112,7 @@ Analyze Response
 Send Response (src/services/whatsapp.js)
          │
          ├─→ Format chatId
-         ├─→ POST to WaAPI
+         ├─→ POST to Fonnte
          │
          ▼
 Broadcast to Dashboard (src/utils/broadcast.js)
@@ -150,8 +150,8 @@ Broadcast to Dashboard (src/utils/broadcast.js)
 **Purpose**: Business logic & external integrations
 
 **Files**:
-- `ai.js` - Groq AI integration
-- `whatsapp.js` - WaAPI integration
+- `ai.js` - DeepSeek AI integration
+- `whatsapp.js` - Fonnte integration
 - `retriever.js` - Knowledge retrieval (TF-IDF)
 
 **Responsibilities**:
@@ -486,7 +486,7 @@ function getConversation(phone) {
 ✅ Closed for modification (existing code stable)
 
 ### **L - Liskov Substitution**
-✅ Can swap implementations (e.g., Groq → OpenAI)
+✅ Can swap implementations (e.g., DeepSeek → OpenAI)
 
 ### **I - Interface Segregation**
 ✅ Small, focused modules

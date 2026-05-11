@@ -29,7 +29,7 @@ router.post('/conversations/:phone/reply', async (req, res) => {
   db.addMessage(phone, 'staff', text);
   broadcast('message', { phone, from: 'staff', text, time: Date.now() });
 
-  await sendMessage(config.waapi.trialChatId, text);
+  await sendMessage(phone, text);
   res.json({ ok: true });
 });
 
