@@ -69,11 +69,23 @@
     </div>
   </div>
   <div class="flex flex-col gap-6">
+    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Dashboard">
+      <span class="material-symbols-outlined">dashboard</span>
+    </button>
     <button class="flex items-center justify-center text-primary w-10 h-10 bg-primary-fixed/30 rounded-xl" title="Messages">
       <span class="material-symbols-outlined fill">chat_bubble</span>
     </button>
+    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Tickets">
+      <span class="material-symbols-outlined">confirmation_number</span>
+    </button>
+    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Reports">
+      <span class="material-symbols-outlined">analytics</span>
+    </button>
   </div>
   <div class="mt-auto flex flex-col gap-6">
+    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" title="Settings">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
     <a href="/auth/logout" class="flex items-center justify-center text-error w-10 h-10 hover:bg-error-container transition-colors rounded-xl" title="Logout">
       <span class="material-symbols-outlined">logout</span>
     </a>
@@ -128,9 +140,23 @@
     </div>
 
     <div class="p-4 border-t border-outline-variant bg-surface-container-lowest hidden md:block">
-      <div class="flex items-center justify-between text-[12px] text-on-surface-variant">
+      <div class="flex items-center justify-between text-[12px] text-on-surface-variant mb-2">
         <span>Total Percakapan</span>
-        <span id="statTotal" class="font-bold text-on-surface">0</span>
+        <span id="statTotal" class="font-bold text-on-surface text-[14px]">0</span>
+      </div>
+      <div class="grid grid-cols-3 gap-2">
+        <div class="bg-surface-container p-2 rounded-lg text-center">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">AI</p>
+          <p id="statAi" class="font-bold text-primary text-[14px]">0</p>
+        </div>
+        <div class="bg-surface-container p-2 rounded-lg text-center border border-warning/10">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Eskalasi</p>
+          <p id="statEsc" class="font-bold text-warning text-[14px]">0</p>
+        </div>
+        <div class="bg-surface-container p-2 rounded-lg text-center border border-success/10">
+          <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Selesai</p>
+          <p id="statDone" class="font-bold text-success text-[14px]">0</p>
+        </div>
       </div>
     </div>
   </aside>
@@ -427,6 +453,9 @@ function filterConversations() {
 function updateStatsUI() {
   const list = Array.from(conversationsMap.values());
   document.getElementById('statTotal').textContent = list.length;
+  document.getElementById('statAi').textContent = list.filter(c => c.status === 'ai').length;
+  document.getElementById('statEsc').textContent = list.filter(c => c.status === 'escalated').length;
+  document.getElementById('statDone').textContent = list.filter(c => c.status === 'done').length;
 }
 function showToast(m) {
   const t = document.getElementById('globalToast');
