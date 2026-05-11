@@ -74,8 +74,8 @@ router.post('/webhook', async (req, res) => {
       // Pilihan terakhir = eskalasi manual
       if (chosen.topik === null) {
         replyText =
-          `Baik Sobat IT Helpdesk! Saya akan menghubungkan Anda dengan tim IT Helpdesk kami.\n` +
-          `Mohon tunggu sebentar, staf kami akan segera merespons. 🙏`;
+          `Baik Sobat! Saya akan menghubungkan Anda dengan tim layanan kami.\n` +
+          `Mohon tunggu sebentar, tim kami akan segera merespons. 🙏`;
         db.addMessage(phone, 'ai', replyText);
         db.updateStatus(phone, 'escalated');
         broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
@@ -122,7 +122,7 @@ router.post('/webhook', async (req, res) => {
     broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
 
     // Cek eskalasi dari AI
-    const isEscalated = replyText.includes('menghubungkan Sobat IT Helpdesk dengan tim kami');
+    const isEscalated = replyText.includes('menghubungkan Sobat dengan tim kami');
     if (isEscalated) {
       db.updateStatus(phone, 'escalated');
       broadcast('status_change', { phone, status: 'escalated' });
@@ -130,7 +130,7 @@ router.post('/webhook', async (req, res) => {
     }
 
     // Cek selesai
-    const isDone = replyText.includes('bit.ly/survey-ithelpdesk');
+    const isDone = replyText.includes('bit.ly/survey-layanan-ai');
     if (isDone && !isEscalated) {
       db.updateStatus(phone, 'done');
       db.resetMenuState(phone);

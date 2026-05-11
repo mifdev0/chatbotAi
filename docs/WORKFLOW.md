@@ -1,11 +1,11 @@
 # 📋 Dokumentasi Workflow & Tech Stack
-## WhatsApp Bot IT Helpdesk UMS
+## AI WhatsApp Bot
 
 ---
 
 ## 🎯 Deskripsi Project
 
-Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (DeepSeek) untuk menjawab pertanyaan mahasiswa/dosen tentang masalah IT kampus. Bot ini dilengkapi dengan dashboard web untuk monitoring dan eskalasi manual oleh staf IT.
+Bot WhatsApp otomatis yang menggunakan AI (DeepSeek) untuk menjawab pertanyaan pengguna. Bot ini dilengkapi dengan dashboard web untuk monitoring dan eskalasi manual oleh staf admin.
 
 ---
 
@@ -21,8 +21,7 @@ Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (DeepSeek) untuk
 - **Natural.js** - Library NLP untuk TF-IDF retrieval dan tokenization
 
 ### **Database**
-- **Better-SQLite3** - Database SQLite untuk knowledge base
-- **JSON File (data.json)** - Penyimpanan percakapan dan state
+- **Better-SQLite3** - Database SQLite untuk knowledge base dan percakapan
 
 ### **External APIs**
 - **Fonnte** - WhatsApp API untuk mengirim/menerima pesan
@@ -37,19 +36,19 @@ Bot WhatsApp otomatis untuk IT Helpdesk UMS yang menggunakan AI (DeepSeek) untuk
 ## 📁 Struktur File & Fungsinya
 
 ```
-wabot-helpdesk-ums/
+whatsapp-ai-bot/
 │
 ├── index.js              # Server utama + webhook handler + REST API
 ├── ai.js                 # Integrasi DeepSeek AI + system prompt
 ├── whatsapp.js           # Integrasi Fonnte untuk kirim pesan WA
 ├── retriever.js          # TF-IDF retrieval untuk knowledge base
-├── db.js                 # Database handler untuk percakapan (JSON)
+├── db.js                 # Database handler untuk percakapan (SQLite)
 ├── knowledge-db.js       # Database handler untuk knowledge base (SQLite)
 │
-├── data.json             # Storage percakapan & state (auto-generated)
+├── conversations.db      # Storage percakapan & state
 ├── knowledge.db          # SQLite database untuk knowledge base
 │
-├── dashboard.html        # Dashboard web untuk monitoring (opsional)
+├── dashboard.html        # Dashboard web untuk monitoring
 │
 ├── .env                  # Konfigurasi API keys (JANGAN di-commit!)
 ├── package.json          # Dependencies & scripts
@@ -202,9 +201,9 @@ wabot-helpdesk-ums/
 │                                                              │
 │  ---                                                         │
 │                                                              │
-│  [Login Email Kampus]                                        │
-│  LOGIN EMAIL KAMPUS:                                         │
-│  - Format email mahasiswa...                                │
+│  [Login Email Instansi]                                        │
+│  LOGIN EMAIL INSTANSI:                                         │
+│  - Format email pengguna...                                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -214,7 +213,7 @@ wabot-helpdesk-ums/
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  STAF IT BUKA DASHBOARD (dashboard.html)                    │
+│  ADMIN BUKA DASHBOARD (dashboard.html)                    │
 └────────────────┬────────────────────────────────────────────┘
                  │
                  ▼
@@ -248,7 +247,7 @@ wabot-helpdesk-ums/
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  STAF BALAS PESAN (jika status ESCALATED)                   │
+│  ADMIN BALAS PESAN (jika status ESCALATED)                   │
 │  - Ketik pesan di input box                                 │
 │  - POST /api/conversations/:phone/reply                     │
 │  - Pesan dikirim via Fonnte ke user                          │
@@ -272,7 +271,7 @@ wabot-helpdesk-ums/
 ```bash
 # Clone repository (jika dari Git)
 git clone <repository-url>
-cd wabot-helpdesk-ums
+cd whatsapp-ai-bot
 
 # Install dependencies
 npm install
@@ -295,11 +294,6 @@ FONNTE_TOKEN=xxxxxxxxxxxxxxxxxxxxx
 PORT=3000
 ```
 
-**Cara mendapatkan Fonnte credentials:**
-1. Login ke https://fonnte.com
-2. Buat instance baru → scan QR dengan WhatsApp Business
-3. Buat **API Token** di menu "User API Tokens"
-
 ---
 
 ### **Langkah 3: Jalankan Server**
@@ -314,255 +308,18 @@ npm run dev
 npm start
 ```
 
-Server akan berjalan di `http://localhost:3000`
-
----
-
-### **Langkah 4: Expose ke Internet (untuk Testing Lokal)**
-
-Gunakan **ngrok** untuk expose localhost:
-
-```bash
-# Install ngrok (jika belum)
-# Download dari https://ngrok.com/download
-
-# Jalankan ngrok
-ngrok http 3000
-```
-
-Salin URL ngrok (contoh: `https://abc123.ngrok-free.app`)
-
----
-
-### **Langkah 5: Set Webhook di Fonnte**
-
-1. Buka dashboard Fonnte → pilih instance Anda
-2. Masuk ke menu **Webhooks**
-3. Set **Webhook URL**: `https://abc123.ngrok-free.app/webhook`
-4. Aktifkan event: **message** atau **message_create**
-5. Klik **Save**
-
----
-
-### **Langkah 6: Testing**
-
-1. Kirim pesan WhatsApp ke nomor yang terhubung dengan Fonnte
-2. Bot akan membalas dengan menu pilihan
-3. Pilih angka 1-8 untuk memilih topik
-4. Bot akan menjawab berdasarkan knowledge base
-
----
-
-## 📊 Endpoint API
-
-### **Webhook**
-```
-POST /webhook
-```
-Menerima webhook dari Fonnte saat ada pesan masuk.
-
-### **Get All Conversations**
-```
-GET /api/conversations
-```
-Mengambil semua percakapan (untuk dashboard).
-
-### **Get Single Conversation**
-```
-GET /api/conversations/:phone
-```
-Mengambil detail percakapan berdasarkan nomor telepon.
-
-### **Reply to User (Staff)**
-```
-POST /api/conversations/:phone/reply
-Body: { "text": "Pesan dari staf" }
-```
-Staf IT membalas pesan user yang sudah dieskalasi.
-
-### **Update Conversation Status**
-```
-PATCH /api/conversations/:phone/status
-Body: { "status": "ai" | "escalated" | "done" }
-```
-Update status percakapan.
-
-### **Health Check**
-```
-GET /
-```
-Cek apakah server berjalan.
-
----
-
-## 🎨 Fitur Utama
-
-### **1. Menu Interaktif**
-User memilih topik dengan mengetik angka 1-8:
-1. Lupa Password / Reset Akun
-2. Verifikasi 2 Langkah (2FA)
-3. Login Email Kampus
-4. Login MyAkademik / STAR / MBKM
-5. Login STAR Parent
-6. WiFi Kampus
-7. SPADA (E-Learning)
-8. Masalah lain / Chat dengan Admin IT Helpdesk
-
-### **2. AI-Powered Responses**
-- Menggunakan DeepSeek API (DeepSeek-v4-pro)
-- Temperature rendah (0.2) untuk jawaban konsisten
-- Hanya menjawab berdasarkan knowledge base
-- Auto-eskalasi jika tidak ada informasi
-
-### **3. Knowledge Base Retrieval**
-- TF-IDF similarity scoring
-- Cache index untuk performa
-- Top 2 knowledge dengan score > 1.0
-- SQLite database untuk knowledge storage
-
-### **4. State Management**
-- **Menu State**: `idle` (belum pilih) / `topic_selected` (sudah pilih)
-- **Conversation Status**: `ai` / `escalated` / `done`
-- **Selected Topic**: Menyimpan topik yang dipilih user
-
-### **5. Dashboard Real-time**
-- WebSocket untuk update real-time
-- Monitoring semua percakapan
-- Staf bisa balas manual saat eskalasi
-- Update status percakapan
-
-### **6. Auto-Escalation**
-Bot otomatis eskalasi ke staf jika:
-- Tidak ada knowledge yang relevan
-- User pilih menu "Masalah lain"
-- AI mendeteksi pertanyaan di luar scope
-
-### **7. Conversation History**
-- Menyimpan semua pesan per nomor WA
-- Context terjaga dalam percakapan
-- Kirim 6 pesan terakhir ke AI
-
----
-
-## 🔧 Kustomisasi
-
-### **Menambah Knowledge Base**
-
-Edit file `knowledge-db.js` bagian `seedData`:
-
-```javascript
-const seedData = [
-  [
-    'Topik Baru',
-    `KONTEN TOPIK BARU:
-- Poin 1
-- Poin 2
-- Poin 3`
-  ],
-  // ... knowledge lainnya
-];
-```
-
-Atau tambah via SQL:
-```sql
-INSERT INTO knowledge (topik, konten) VALUES 
-('Topik Baru', 'Konten lengkap...');
-```
-
-### **Mengubah System Prompt**
-
-Edit file `ai.js` bagian `BASE_PROMPT`:
-
-```javascript
-const BASE_PROMPT = `Kamu adalah asisten AI...
-[Ubah instruksi di sini]
-`;
-```
-
-### **Menambah Menu Item**
-
-Edit file `index.js` bagian `MENU_ITEMS`:
-
-```javascript
-const MENU_ITEMS = [
-  { label: 'Menu Baru', topik: 'Keyword untuk retrieve' },
-  // ... menu lainnya
-];
-```
-
----
-
-## 🚀 Deploy ke Production
-
-### **Rekomendasi Platform**
-
-#### **1. Railway (Paling Mudah)**
-```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Deploy
-railway up
-```
-
-#### **2. Render**
-1. Push code ke GitHub
-2. Connect repository di Render
-3. Set environment variables
-4. Deploy otomatis
-
-#### **3. Fly.io**
-```bash
-# Install Fly CLI
-curl -L https://fly.io/install.sh | sh
-
-# Login
-fly auth login
-
-# Deploy
-fly launch
-```
-
-**Jangan lupa:**
-- Set environment variables di platform
-- Update webhook URL di Fonnte dengan URL production
-- Pastikan port sesuai dengan yang disediakan platform
-
----
-
-## 📝 Troubleshooting
-
-### **Bot tidak merespons**
-- Cek webhook URL sudah benar di Fonnte
-- Cek server berjalan dan bisa diakses dari internet
-- Cek logs di console untuk error
-
-### **AI menjawab tidak relevan**
-- Cek knowledge base sudah lengkap
-- Turunkan temperature di `ai.js`
-- Perbaiki system prompt
-
-### **Webhook error 401/403**
-- Cek FONNTE_TOKEN di `.env`
-- Regenerate token di dashboard Fonnte
-
-### **Database error**
-- Hapus `data.json` dan `knowledge.db`, restart server
-- Database akan di-recreate otomatis
-
 ---
 
 ## 📄 Lisensi
 
-Project ini dibuat untuk IT Helpdesk UMS.
+Project ini dibuat untuk membantu layanan pelanggan otomatis.
 
 ---
 
 ## 👨‍💻 Developer
 
-Dibuat dengan ❤️ oleh Tim IT Helpdesk UMS
+Dibuat dengan ❤️ oleh Developer
 
-**Fun Fact:** Pacar admin yang membuat sistem ini bernama Eldina Nurdiana 😄
+---
+
+**Selamat menggunakan AI WhatsApp Bot! 🚀**

@@ -2,7 +2,7 @@
 
 ## System Overview
 
-WhatsApp Bot IT Helpdesk UMS adalah sistem chatbot berbasis AI yang menggunakan **modular architecture** dengan **separation of concerns** yang jelas.
+WhatsApp Bot AI Helpdesk adalah sistem chatbot berbasis AI yang menggunakan **modular architecture** dengan **separation of concerns** yang jelas.
 
 ---
 

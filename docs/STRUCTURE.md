@@ -9,7 +9,7 @@ Project ini menggunakan **modular architecture** dengan separation of concerns y
 ## 📂 Folder Structure
 
 ```
-wabot-helpdesk-ums/
+whatsapp-ai-bot/
 ├── src/                    # Source code
 │   ├── config/            # Configuration files
 │   ├── database/          # Database handlers

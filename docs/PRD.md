@@ -1,10 +1,10 @@
 # Product Requirement Document (PRD)
-## WhatsApp Bot IT Helpdesk UMS
+## WhatsApp Bot AI Helpdesk
 
 **Versi:** 2.1.0  
 **Tanggal:** 7 Mei 2026  
 **Status:** In Progress  
-**Product Owner:** Mahasiswa Skripsi
+**Product Owner:** Lead Developer
 
 ---
 
@@ -12,11 +12,11 @@
 
 ### 1.1 Latar Belakang
 
-IT Helpdesk Universitas Muhammadiyah Surakarta (UMS) menghadapi volume pertanyaan mahasiswa dan dosen yang tinggi setiap harinya — lupa password, login akun, masalah WiFi, SPADA, dan lainnya. Pertanyaan-pertanyaan ini bersifat repetitif dan membebani staf IT yang terbatas. Di sisi lain, WhatsApp adalah kanal komunikasi utama yang paling sering digunakan oleh civitas akademika UMS.
+Layanan pelanggan seringkali menghadapi volume pertanyaan pengguna yang tinggi setiap harinya — pertanyaan repetitif, bantuan teknis dasar, dan lainnya. Pertanyaan-pertanyaan ini bersifat repetitif dan membebani staf yang terbatas. Di sisi lain, WhatsApp adalah kanal komunikasi utama yang paling sering digunakan oleh pengguna.
 
 ### 1.2 Solusi
 
-WhatsApp Bot IT Helpdesk UMS adalah chatbot berbasis AI yang beroperasi melalui WhatsApp untuk menjawab pertanyaan-pertanyaan IT umum secara otomatis. Bot ini menggunakan kombinasi **TF-IDF knowledge retrieval** (untuk mencocokkan pertanyaan dengan basis pengetahuan) dan **DeepSeek (DeepSeek-v4-pro)** (untuk menghasilkan jawaban natural berbahasa Indonesia). Dilengkapi **dashboard real-time** bagi staf IT untuk memonitor percakapan dan mengambil alih (eskalasi) secara manual jika AI tidak mampu menjawab.
+WhatsApp Bot AI Helpdesk adalah chatbot berbasis AI yang beroperasi melalui WhatsApp untuk menjawab pertanyaan-pertanyaan IT umum secara otomatis. Bot ini menggunakan kombinasi **TF-IDF knowledge retrieval** (untuk mencocokkan pertanyaan dengan basis pengetahuan) dan **DeepSeek (DeepSeek-v4-pro)** (untuk menghasilkan jawaban natural berbahasa Indonesia). Dilengkapi **dashboard real-time** bagi staf IT untuk memonitor percakapan dan mengambil alih (eskalasi) secara manual jika AI tidak mampu menjawab.
 
 ### 1.3 Tujuan Produk
 
@@ -34,8 +34,8 @@ WhatsApp Bot IT Helpdesk UMS adalah chatbot berbasis AI yang beroperasi melalui 
 
 | Persona | Deskripsi | Kebutuhan Utama |
 |---|---|---|
-| **Mahasiswa UMS** | Pengguna utama yang mengalami kendala IT (password, akun, WiFi, e-learning) | Jawaban cepat, panduan step-by-step, bisa diakses dari mana saja via WhatsApp |
-| **Dosen / Staf UMS** | Pengguna yang membutuhkan bantuan teknis terkait sistem akademik | Panduan jelas, bahasa Indonesia formal, opsi bantuan lanjutan |
+| **Mahasiswa** | Pengguna utama yang mengalami kendala IT (password, akun, WiFi, e-learning) | Jawaban cepat, panduan step-by-step, bisa diakses dari mana saja via WhatsApp |
+| **Dosen / Staf** | Pengguna yang membutuhkan bantuan teknis terkait sistem akademik | Panduan jelas, bahasa Indonesia formal, opsi bantuan lanjutan |
 | **Staf IT (Admin)** | Petugas helpdesk yang memonitor dan menangani eskalasi | Dashboard real-time, notifikasi percakapan baru, kemampuan reply langsung, status tracking |
 
 ### 2.2 User Stories Kunci
@@ -72,7 +72,7 @@ WhatsApp Bot IT Helpdesk UMS adalah chatbot berbasis AI yang beroperasi melalui 
 - Autentikasi user dashboard (login multi-user)
 - NLP intent classification selain TF-IDF
 - Support attachment/gambar/dokumen via WhatsApp
-- Integrasi langsung dengan database akademik UMS (SSO, reset password otomatis)
+- Integrasi langsung dengan database internal (SSO, reset password otomatis)
 - Multi-bahasa (saat ini hanya Bahasa Indonesia)
 - Notifikasi push ke staf IT (email/telegram)
 
@@ -91,16 +91,16 @@ WhatsApp Bot IT Helpdesk UMS adalah chatbot berbasis AI yang beroperasi melalui 
 - Saat user pertama kali chat atau mengetik "menu"/"kembali", bot mengirim menu 8 topik:
 
 ```
-📋 *IT HELPDESK UMS - MENU UTAMA*
+📋 *AI ASSISTANT - MENU UTAMA*
 ───────────────
 1. 🔑 Lupa Password Akun
 2. 🔐 Verifikasi 2 Langkah (2FA)
-3. 📧 Login Email Kampus
-4. 🎓 Login MyAkademik
-5. 👨‍👩‍👧 Login STAR Parent
-6. 📶 WiFi Kampus
-7. 📚 SPADA (E-Learning)
-8. 👨‍💻 Masalah Lain (Eskalasi ke Staf IT)
+3. 📧 Login Email Instansi
+4. 🎓 Login Portal Utama
+5. 👨‍👩‍👧 Login Portal Orang Tua
+6. 📶 Masalah Koneksi
+7. 📚 E-Learning
+8. 👨‍💻 Masalah Lain (Eskalasi ke Admin)
 ───────────────
 ```
 
@@ -116,17 +116,17 @@ WhatsApp Bot IT Helpdesk UMS adalah chatbot berbasis AI yang beroperasi melalui 
 - Jawaban diformat dengan emoji, bold (Markdown WhatsApp), dan maksimal ~400 token
 - Jika AI mengindikasikan tidak tahu / tidak dapat menjawab → auto-escalate
 
-#### FR-04: Eskalasi ke Staf IT
+#### FR-04: Eskalasi ke Admin
 Trigger eskalasi:
 - User memilih nomor 8 ("Masalah Lain")
 - Tidak ada knowledge cocok (skor TF-IDF < 1.0)
 - AI response mengandung frasa eskalasi
-- Staff mengubah status secara manual via dashboard
+- Admin mengubah status secara manual via dashboard
 
 Saat percakapan eskalasi:
-- Bot memberitahu user bahwa staf IT akan membalas
+- Bot memberitahu user bahwa admin akan membalas
 - Semua pesan user berikutnya diteruskan ke dashboard (tidak direspons AI)
-- Pesan balasan staf dikirim via Fonnte ke nomor WhatsApp user
+- Pesan balasan admin dikirim via Fonnte ke nomor WhatsApp user
 
 #### FR-05: Status & Lifecycle
 - Status percakapan: `ai` (default), `escalated`, `done`
@@ -186,13 +186,13 @@ Topik yang sudah di-seed saat inisialisasi database:
 
 | # | Topik | Konten |
 |---|---|---|
-| 1 | Lupa Password Akun | Panduan reset password akun UMS |
+| 1 | Lupa Password Akun | Panduan reset password akun |
 | 2 | Verifikasi 2 Langkah (2FA) | Setup dan troubleshooting 2FA |
-| 3 | Login Email Kampus | Panduan akses email kampus (@student.ums.ac.id) |
-| 4 | Login MyAkademik | STAR, MySkripsi, MBKM, Wisuda |
-| 5 | Login STAR Parent | Panduan untuk orang tua mahasiswa |
+| 3 | Login Email Instansi | Panduan akses email instansi (@student.example.com) |
+| 4 | Login Portal Akademik | KRS, Transkrip, MBKM, Wisuda |
+| 5 | Login Portal Orang Tua | Panduan untuk orang tua pengguna |
 | 6 | WiFi Kampus | Cara koneksi, SSID, troubleshooting |
-| 7 | SPADA (E-Learning) | Akses, upload tugas, masalah umum |
+| 7 | E-Learning | Akses, upload tugas, masalah umum |
 
 #### FR-12: CRUD Knowledge
 - Menambah topik baru via dashboard (future) atau script
@@ -300,7 +300,7 @@ Topik yang sudah di-seed saat inisialisasi database:
 ### 6.3 Struktur Proyek
 
 ```
-whatsapp-helpdesk-bot/
+whatsapp-ai-bot/
 ├── server.js                    # Entry point (HTTP + WebSocket server)
 ├── src/
 │   ├── app.js                   # Express app setup
@@ -548,12 +548,12 @@ Menu State:
 - DeepSeek API berbayar — biaya per token
 - WhatsApp hanya mendukung teks (tidak ada gambar/dokumen via Fonnte MVP)
 - Nomor WhatsApp harus terverifikasi Meta Business
-- SQLite tidak cocok untuk high-concurrency production (cukup untuk skala UMS)
+- SQLite tidak cocok untuk high-concurrency production (cukup untuk skala instansi)
 
 ### 11.2 Assumptions
 
 - Pengguna (mahasiswa/dosen) familiar menggunakan WhatsApp
-- Knowledge base sudah mencakup > 80% pertanyaan umum IT UMS
+- Knowledge base sudah mencakup > 80% pertanyaan umum
 - Staf IT akan rutin memonitor dashboard saat jam kerja
 - Koneksi internet server stabil untuk integrasi API eksternal
 
@@ -588,7 +588,7 @@ Menu State:
 | v2.3 | Multi-agent / multiple staff dengan assignment round-robin |
 | v2.4 | Autentikasi dashboard (login admin) |
 | v2.5 | Laporan & analitik (chart percakapan per hari, top topic, dll.) |
-| v3.0 | Integrasi SSO UMS (cek status akun langsung, reset password otomatis) |
+| v3.0 | Integrasi SSO (cek status akun langsung, reset password otomatis) |
 | v3.1 | Intent classification multi-label untuk deteksi topik campuran |
 | v3.2 | Support attachment (gambar/dokumen) via WhatsApp |
 

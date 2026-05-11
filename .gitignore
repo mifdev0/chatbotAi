@@ -51,7 +51,7 @@ Thumbs.db
 *.sw?
 
 # Design and Assets
-stitch_dashboard_ai_helpdesk_ums/
+stitch_dashboard_ai_bot/
 
 # Testing
 coverage/

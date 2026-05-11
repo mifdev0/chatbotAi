@@ -1,6 +1,6 @@
-# 🤖 WhatsApp Bot IT Helpdesk UMS
+# 🤖 WhatsApp Bot AI
 
-Bot WhatsApp otomatis berbasis AI untuk IT Helpdesk UMS menggunakan **Fonnte** + **DeepSeek AI** + **Dashboard Real-time**.
+Bot WhatsApp otomatis berbasis AI menggunakan **Fonnte** + **DeepSeek AI** + **Dashboard Real-time**.
 
 ## 📋 Quick Start
 
@@ -22,7 +22,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-wabot-helpdesk-ums/
+whatsapp-ai-bot/
 ├── src/
 │   ├── config/
 │   │   └── env.js              # Environment configuration
@@ -73,9 +73,9 @@ wabot-helpdesk-ums/
 
 - ✅ AI-powered responses dengan DeepSeek
 - ✅ Knowledge base dengan TF-IDF retrieval
-- ✅ Menu interaktif (8 topik)
+- ✅ Menu interaktif
 - ✅ Dashboard real-time monitoring
-- ✅ Auto-escalation ke staf IT
+- ✅ Auto-escalation ke tim admin
 - ✅ State management (idle/topic_selected)
 - ✅ SQLite database (fast & safe)
 
@@ -101,11 +101,8 @@ Push ke GitHub, connect repository, set environment variables.
 
 ## 📞 Support
 
-- Email: ithelpdesk@ums.ac.id
 - GitHub Issues: [Create Issue](https://github.com/your-repo/issues)
 
 ---
 
-**Made with ❤️ by IT Helpdesk UMS**
-
-*Fun Fact: Pacar admin yang membuat sistem ini bernama Eldina Nurdiana 😄*
+**Made with ❤️ for everyone**

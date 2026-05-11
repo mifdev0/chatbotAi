@@ -21,7 +21,7 @@ wss.on('connection', (ws) => {
 // Start server
 const PORT = config.port;
 server.listen(PORT, () => {
-  console.log(`🤖 IT Helpdesk UMS Bot berjalan di port ${PORT}`);
+  console.log(`🤖 AI WhatsApp Bot berjalan di port ${PORT}`);
   console.log(`📡 Webhook : http://localhost:${PORT}/webhook`);
   console.log(`🖥️  API     : http://localhost:${PORT}/api/conversations`);
   console.log(`📊 Dashboard: http://localhost:${PORT}/dashboard.html`);

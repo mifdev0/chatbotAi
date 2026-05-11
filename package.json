@@ -1,7 +1,7 @@
 {
-  "name": "wabot-helpdesk-ums",
-  "version": "2.0.0",
-  "description": "WhatsApp Bot IT Helpdesk UMS via Fonnte + AI (DeepSeek)",
+  "name": "whatsapp-ai-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot AI via Fonnte + DeepSeek",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

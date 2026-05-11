@@ -27,7 +27,7 @@ app.use('/api', apiRoutes);
 // Health check
 app.get('/', (req, res) => {
   res.json({ 
-    status: '🤖 IT Helpdesk UMS Bot running', 
+    status: '🤖 AI WhatsApp Bot running', 
     version: '2.1.0',
     port: process.env.PORT || 3000 
   });
