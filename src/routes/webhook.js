@@ -121,21 +121,23 @@ router.post('/webhook', async (req, res) => {
     db.addMessage(phone, 'ai', replyText);
     broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
 
-    // Cek eskalasi dari AI
-    const isEscalated = replyText.includes('menghubungkan Sobat dengan tim kami');
-    if (isEscalated) {
-      db.updateStatus(phone, 'escalated');
-      broadcast('status_change', { phone, status: 'escalated' });
-      console.log(`[ESKALASI AI] ${name} (${phone})`);
-    }
-
-    // Cek selesai
-    const isDone = replyText.includes('bit.ly/survey-layanan-ai');
-    if (isDone && !isEscalated) {
+    // Cek selesai (prioritas pertama)
+    const isDone = replyText.toLowerCase().includes('bit.ly/survey-layanan-ai') || 
+                   replyText.toLowerCase().includes('survey-layanan-ai');
+    if (isDone) {
       db.updateStatus(phone, 'done');
       db.resetMenuState(phone);
       broadcast('status_change', { phone, status: 'done' });
       console.log(`[SELESAI] ${name} (${phone})`);
+    }
+    // Cek eskalasi dari AI (jika bukan done)
+    else {
+      const isEscalated = replyText.includes('menghubungkan Sobat dengan tim kami');
+      if (isEscalated) {
+        db.updateStatus(phone, 'escalated');
+        broadcast('status_change', { phone, status: 'escalated' });
+        console.log(`[ESKALASI AI] ${name} (${phone})`);
+      }
     }
 
     await sendMessage(phone, replyText);

@@ -78,15 +78,17 @@ whatsapp-ai-bot/
 - ✅ Auto-escalation ke tim admin
 - ✅ State management (idle/topic_selected)
 - ✅ SQLite database (fast & safe)
+- ✅ Auto status "done" setelah survey dikirim
 
 ## 📚 Documentation
 
 Dokumentasi lengkap ada di folder `docs/`:
 
-- **[docs/README.md](docs/README.md)** - Setup lengkap & troubleshooting
-- **[docs/WORKFLOW.md](docs/WORKFLOW.md)** - Workflow & alur sistem
-- **[docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)** - Migration JSON → SQLite
-- **[docs/CHANGELOG.md](docs/CHANGELOG.md)** - Version history
+- **[docs/INDEX.md](docs/INDEX.md)** - 📖 Index semua dokumentasi
+- **[docs/DEPLOY_VPS.md](docs/DEPLOY_VPS.md)** - 🖥️ Deploy ke VPS (Recommended)
+- **[docs/DEPLOY_RAILWAY.md](docs/DEPLOY_RAILWAY.md)** - 🚂 Deploy ke Railway
+- **[docs/WORKFLOW.md](docs/WORKFLOW.md)** - 🔄 Alur kerja sistem
+- **[docs/README.md](docs/README.md)** - 📘 Setup lengkap & troubleshooting
 
 ## 🚀 Deployment
 

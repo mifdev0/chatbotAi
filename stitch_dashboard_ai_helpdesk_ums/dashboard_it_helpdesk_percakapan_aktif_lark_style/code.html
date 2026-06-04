@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UMS IT Helpdesk Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#d5dae5",
+                    "on-primary-container": "#e0e4ff",
+                    "inverse-on-surface": "#ecf1fc",
+                    "inverse-primary": "#b6c4ff",
+                    "background": "#f8f9ff",
+                    "secondary": "#5c5f60",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c3c5d8",
+                    "on-primary-fixed": "#001550",
+                    "on-tertiary-fixed": "#191c1e",
+                    "inverse-surface": "#2b3139",
+                    "on-background": "#161c23",
+                    "surface-tint": "#004de9",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "tertiary-fixed": "#e1e2e4",
+                    "on-surface-variant": "#434656",
+                    "outline": "#737687",
+                    "secondary-fixed-dim": "#c5c7c8",
+                    "secondary-fixed": "#e1e2e4",
+                    "tertiary-container": "#656769",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "tertiary": "#4c4f51",
+                    "surface-container-low": "#eef4fe",
+                    "on-primary-fixed-variant": "#0039b3",
+                    "on-secondary-fixed-variant": "#444749",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#606365",
+                    "primary-container": "#1456f5",
+                    "surface-container-highest": "#dde3ed",
+                    "surface-container-high": "#e3e8f3",
+                    "primary": "#0040c5",
+                    "on-secondary-fixed": "#191c1e",
+                    "primary-fixed": "#dce1ff",
+                    "tertiary-fixed-dim": "#c5c6c8",
+                    "surface": "#f8f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#e5e6e8",
+                    "surface-variant": "#dde3ed",
+                    "surface-bright": "#f8f9ff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#dee0e2",
+                    "on-surface": "#161c23",
+                    "surface-container": "#e9eef9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "margin-page": "40px",
+                    "gutter": "20px",
+                    "unit": "4px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "h1": [
+                            "Inter"
+                    ],
+                    "label-md": [
+                            "Inter"
+                    ],
+                    "h3": [
+                            "Inter"
+                    ],
+                    "display": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ],
+                    "h2": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "body-lg": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "22px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "h1": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "h3": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "18px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "h2": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    }
+            }
+        },
+      }
+    </script>
+<style>
+        /* Essential base styles */
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen overflow-hidden flex">
+<!-- JSON Component: SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col items-center py-4 z-50 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline font-body-md text-body-md w-[56px]">
+<div class="mb-8">
+<!-- Avatar placeholder, no data-alt needed for standard UI elements unless specified -->
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs">IT</div>
+</div>
+<div class="flex flex-col gap-4">
+<a class="flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-dim w-10 h-10 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors scale-95 active:scale-90 transition-transform rounded-full" href="#" title="Dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+</a>
+<a class="flex items-center justify-center bg-primary-container text-on-primary-container rounded-full w-10 h-10 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors scale-95 active:scale-90 transition-transform" href="#" title="Messages">
+<span class="material-symbols-outlined fill" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+</a>
+<a class="flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-dim w-10 h-10 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors scale-95 active:scale-90 transition-transform rounded-full" href="#" title="Tickets">
+<span class="material-symbols-outlined">confirmation_number</span>
+</a>
+<a class="flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-dim w-10 h-10 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors scale-95 active:scale-90 transition-transform rounded-full" href="#" title="Reports">
+<span class="material-symbols-outlined">analytics</span>
+</a>
+</div>
+<div class="mt-auto">
+<a class="flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-dim w-10 h-10 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors scale-95 active:scale-90 transition-transform rounded-full" href="#" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex ml-[56px] h-full">
+<!-- Column 2: Conversation List -->
+<aside class="w-[280px] bg-surface-container-lowest border-r border-outline-variant flex flex-col h-full flex-shrink-0">
+<!-- Header for List -->
+<div class="p-md border-b border-outline-variant">
+<h2 class="font-h2 text-h2 text-on-surface mb-md">Percakapan</h2>
+<!-- Search Box -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full bg-surface-container-high border-none rounded-lg pl-[36px] pr-sm py-sm text-body-md focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Cari percakapan..." type="text"/>
+</div>
+<!-- Nav Links / Tabs -->
+<div class="flex gap-md mt-md">
+<button class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md">Semua</button>
+<button class="text-on-surface-variant dark:text-outline pb-2 font-label-md text-label-md hover:text-primary transition-colors">Eskalasi</button>
+<button class="text-on-surface-variant dark:text-outline pb-2 font-label-md text-label-md hover:text-primary transition-colors">Selesai</button>
+</div>
+</div>
+<!-- List Items -->
+<div class="flex-1 overflow-y-auto">
+<!-- Active Item -->
+<div class="flex items-center gap-sm p-md bg-surface-container cursor-pointer border-l-4 border-primary">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex-shrink-0 overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A generic user profile placeholder image with a solid light blue background and a white silhouette of a person. The style is clean, modern, and corporate." src="https://lh3.googleusercontent.com/aida/ADBb0uiAu-pdP1VBbX_Nsaw-xDqUJM3VXl2AtNZE38-cZLv2iUXqVyrhHU5OHhM54WE45ngkcGSpHRf55d_S3ygeCucHfipdNL_X24zabD7fuq2lJRdfYsXc17OEs3nGIrHwfQnKC2P0DoLBMIHwpsuDQqFbavG0TRVBGsIlMk9mq-IJwmJWMJmY3gI4EoyjC5qagWFAT3JawQP0B55tCoB6lspusfsqoUF_nLRPYsmMVN-mwNJRECr7HWgqtr4"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-xs">
+<span class="font-label-md text-label-md text-on-surface truncate">Siti Aminah</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:42</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Sudah saya coba tapi masih teta...</p>
+<div class="mt-xs">
+<span class="inline-block px-2 py-1 bg-error-container text-on-error-container rounded-sm font-label-sm text-[10px] leading-tight">Eskalasi</span>
+</div>
+</div>
+</div>
+<!-- Inactive Item 1 -->
+<div class="flex items-center gap-sm p-md hover:bg-surface-container-low cursor-pointer border-l-4 border-transparent">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex-shrink-0 overflow-hidden">
+<!-- Placeholder avatar -->
+<div class="w-full h-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">AW</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-xs">
+<span class="font-label-md text-label-md text-on-surface truncate">Ahmad Wijaya</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:15</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Terima kasih atas bantuannya min.</p>
+<div class="mt-xs">
+<span class="inline-block px-2 py-1 bg-surface-variant text-on-surface-variant rounded-sm font-label-sm text-[10px] leading-tight">Eskalasi</span>
+</div>
+</div>
+</div>
+<!-- Inactive Item 2 -->
+<div class="flex items-center gap-sm p-md hover:bg-surface-container-low cursor-pointer border-l-4 border-transparent">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex-shrink-0 overflow-hidden">
+<!-- Placeholder avatar -->
+<div class="w-full h-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">BS</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-xs">
+<span class="font-label-md text-label-md text-on-surface truncate">Budi Santoso</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kemarin</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Bagaimana cara reset password?</p>
+<div class="mt-xs">
+<span class="inline-block px-2 py-1 bg-surface-container-highest text-on-surface-variant rounded-sm font-label-sm text-[10px] leading-tight">Selesai</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Stats -->
+<div class="p-md border-t border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Total Tiket</span>
+<span class="font-bold text-on-surface">128</span>
+</div>
+</div>
+</aside>
+<!-- Column 3: Active Chat Area -->
+<main class="flex-1 flex flex-col h-full bg-surface-container-lowest">
+<!-- Chat Header -->
+<header class="flex justify-between items-center w-full px-lg py-md bg-surface-container-lowest border-b border-outline-variant flex-shrink-0">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img alt="Siti Aminah" class="w-full h-full object-cover" data-alt="A generic user profile placeholder image with a solid light blue background and a white silhouette of a person. The style is clean, modern, and corporate." src="https://lh3.googleusercontent.com/aida/ADBb0uiAu-pdP1VBbX_Nsaw-xDqUJM3VXl2AtNZE38-cZLv2iUXqVyrhHU5OHhM54WE45ngkcGSpHRf55d_S3ygeCucHfipdNL_X24zabD7fuq2lJRdfYsXc17OEs3nGIrHwfQnKC2P0DoLBMIHwpsuDQqFbavG0TRVBGsIlMk9mq-IJwmJWMJmY3gI4EoyjC5qagWFAT3JawQP0B55tCoB6lspusfsqoUF_nLRPYsmMVN-mwNJRECr7HWgqtr4"/>
+</div>
+<div>
+<h1 class="font-h3 text-h3 text-on-surface flex items-center gap-sm">
+                            Siti Aminah
+                            <span class="px-2 py-0.5 bg-error-container text-on-error-container rounded-sm font-label-sm text-[10px] uppercase tracking-wide">Eskalasi</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Mahasiswa · 08123456789</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">Ke AI</button>
+<button class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">Eskalasi</button>
+<button class="px-4 py-2 bg-primary rounded-lg font-label-md text-label-md text-on-primary hover:bg-on-primary-fixed-variant transition-colors shadow-sm">Selesaikan</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors ml-xs">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Chat Messages Area -->
+<div class="flex-1 overflow-y-auto p-lg bg-surface flex flex-col gap-lg">
+<!-- System Message -->
+<div class="flex justify-center my-md">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-label-sm text-label-sm italic">Hari ini</span>
+</div>
+<!-- User Message -->
+<div class="flex gap-md max-w-[80%]">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-1">
+<img alt="User" class="w-full h-full object-cover" data-alt="A generic user profile placeholder image with a solid light blue background and a white silhouette of a person. The style is clean, modern, and corporate." src="https://lh3.googleusercontent.com/aida/ADBb0uiAu-pdP1VBbX_Nsaw-xDqUJM3VXl2AtNZE38-cZLv2iUXqVyrhHU5OHhM54WE45ngkcGSpHRf55d_S3ygeCucHfipdNL_X24zabD7fuq2lJRdfYsXc17OEs3nGIrHwfQnKC2P0DoLBMIHwpsuDQqFbavG0TRVBGsIlMk9mq-IJwmJWMJmY3gI4EoyjC5qagWFAT3JawQP0B55tCoB6lspusfsqoUF_nLRPYsmMVN-mwNJRECr7HWgqtr4"/>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-1 ml-1">Siti Aminah • 10:30</div>
+<div class="bg-surface-container-lowest p-md rounded-xl rounded-tl-sm shadow-[0_8px_24px_rgba(31,35,41,0.04)] border border-outline-variant font-body-md text-body-md text-on-surface">
+                            Halo min, saya tidak bisa login portal akademik.
+                        </div>
+</div>
+</div>
+<!-- AI Message -->
+<div class="flex gap-md max-w-[80%] self-end flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-primary flex-shrink-0 mt-1 flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+</div>
+<div class="flex flex-col items-end">
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-1 mr-1 flex items-center gap-1">
+<span class="px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded text-[10px] font-bold">AI</span>
+                            Bot • 10:31
+                        </div>
+<div class="bg-primary p-md rounded-xl rounded-tr-sm shadow-sm font-body-md text-body-md text-on-primary">
+                            Halo Kak Siti, silakan coba hapus cache browser Anda terlebih dahulu.
+                        </div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex gap-md max-w-[80%]">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-1">
+<img alt="User" class="w-full h-full object-cover" data-alt="A generic user profile placeholder image with a solid light blue background and a white silhouette of a person. The style is clean, modern, and corporate." src="https://lh3.googleusercontent.com/aida/ADBb0uiAu-pdP1VBbX_Nsaw-xDqUJM3VXl2AtNZE38-cZLv2iUXqVyrhHU5OHhM54WE45ngkcGSpHRf55d_S3ygeCucHfipdNL_X24zabD7fuq2lJRdfYsXc17OEs3nGIrHwfQnKC2P0DoLBMIHwpsuDQqFbavG0TRVBGsIlMk9mq-IJwmJWMJmY3gI4EoyjC5qagWFAT3JawQP0B55tCoB6lspusfsqoUF_nLRPYsmMVN-mwNJRECr7HWgqtr4"/>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-1 ml-1">Siti Aminah • 10:35</div>
+<div class="bg-surface-container-lowest p-md rounded-xl rounded-tl-sm shadow-[0_8px_24px_rgba(31,35,41,0.04)] border border-outline-variant font-body-md text-body-md text-on-surface">
+                            Sudah saya coba tapi masih tetap tidak bisa.
+                        </div>
+</div>
+</div>
+<!-- System Notice -->
+<div class="flex justify-center my-md">
+<span class="px-4 py-2 text-on-surface-variant font-body-md text-body-md italic text-center">
+                        Percakapan dialihkan ke Staf IT (Admin)
+                    </span>
+</div>
+<!-- Staff IT Message -->
+<div class="flex gap-md max-w-[80%] self-end flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-on-primary-fixed flex-shrink-0 mt-1 flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[16px]">support_agent</span>
+</div>
+<div class="flex flex-col items-end">
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-1 mr-1 flex items-center gap-1">
+<span class="px-1.5 py-0.5 bg-on-primary-fixed text-on-primary rounded text-[10px] font-bold">Admin</span>
+                            Anda • 10:42
+                        </div>
+<div class="bg-on-primary-fixed p-md rounded-xl rounded-tr-sm shadow-sm font-body-md text-body-md text-on-primary">
+                            Mohon maaf atas kendalanya. Saya akan bantu reset sesi login Anda sekarang.
+                        </div>
+</div>
+</div>
+</div>
+<!-- Chat Input Area -->
+<div class="p-lg bg-surface-container-lowest border-t border-outline-variant flex-shrink-0">
+<div class="flex items-end gap-sm bg-surface-container-lowest border border-outline-variant rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-container focus-within:ring-opacity-20 transition-all p-2 shadow-[0_8px_24px_rgba(31,35,41,0.04)]">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-lg hover:bg-surface-container-low mb-1">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 resize-none font-body-md text-body-md text-on-surface p-2 max-h-[120px]" placeholder="Ketik balasan..." rows="1"></textarea>
+<button class="p-3 bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant transition-colors shadow-sm mb-1 flex items-center justify-center">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-2 px-2">
+<div class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                        Tekan Enter untuk mengirim, Shift + Enter untuk baris baru
+                    </div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
