@@ -11,6 +11,10 @@ const { broadcast } = require('../utils/broadcast');
 // Deduplikasi message IDs
 const processedIds = new Set();
 
+router.get('/webhook', (req, res) => {
+  res.status(200).send('Webhook is active');
+});
+
 router.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 
