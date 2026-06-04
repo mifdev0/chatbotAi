@@ -1,8 +1,10 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs = require('fs');
 const config = require('../config/env');
 
 const DB_PATH = path.resolve(config.database.knowledge);
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 const db = new Database(DB_PATH);
 
 // Buat tabel jika belum ada
