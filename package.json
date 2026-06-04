@@ -11,5 +11,16 @@
     "dev": "nodemon --ignore data/ --ignore conversations.db server.js",
     "migrate": "node src/database/migrations/migrate-to-sqlite.js"
   },
-  ...rest of your package.json
+  "dependencies": {
+    "axios": "1.7.2",
+    "better-sqlite3": "^12.9.0",
+    "dotenv": "16.4.5",
+    "express": "4.19.2",
+    "express-session": "^1.19.0",
+    "natural": "^8.1.1",
+    "ws": "8.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.4"
+  }
 }
