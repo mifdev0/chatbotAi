@@ -47,11 +47,6 @@ whatsapp-ai-bot/
 ├── data/
 │   ├── conversations.db        # SQLite database (conversations)
 │   └── knowledge.db            # SQLite database (knowledge base)
-├── docs/
-│   ├── README.md               # Full documentation
-│   ├── WORKFLOW.md             # Workflow & tech stack
-│   ├── MIGRATION_GUIDE.md      # Migration guide
-│   └── CHANGELOG.md            # Version history
 ├── scripts/
 │   └── (future scripts)
 ├── .env                        # Environment variables
@@ -79,16 +74,6 @@ whatsapp-ai-bot/
 - ✅ State management (idle/topic_selected)
 - ✅ SQLite database (fast & safe)
 - ✅ Auto status "done" setelah survey dikirim
-
-## 📚 Documentation
-
-Dokumentasi lengkap ada di folder `docs/`:
-
-- **[docs/INDEX.md](docs/INDEX.md)** - 📖 Index semua dokumentasi
-- **[docs/DEPLOY_VPS.md](docs/DEPLOY_VPS.md)** - 🖥️ Deploy ke VPS (Recommended)
-- **[docs/DEPLOY_RAILWAY.md](docs/DEPLOY_RAILWAY.md)** - 🚂 Deploy ke Railway
-- **[docs/WORKFLOW.md](docs/WORKFLOW.md)** - 🔄 Alur kerja sistem
-- **[docs/README.md](docs/README.md)** - 📘 Setup lengkap & troubleshooting
 
 ## 🚀 Deployment
 
