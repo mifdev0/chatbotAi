@@ -34,6 +34,11 @@ function isClosingIntent(input) {
   return /\b(gajadi|ga jadi|gak jadi|nggak jadi|batal|sudah|udah|selesai|tidak ada|ga ada|gak ada|nggak ada|makasih|terima kasih|thanks|thank you)\b/i.test(text);
 }
 
+function isNewIssueIntent(input) {
+  const text = input.trim().toLowerCase();
+  return /\b(masalah baru|kendala baru|ada masalah|ada kendala|mau tanya|ingin tanya|tanya lagi|butuh bantuan|bantu lagi)\b/i.test(text);
+}
+
 function isExternalTopic(input) {
   return /\b(mbg|pemerintah|go\.id|pajak|bpjs|bank|brimo|bca|bni|bri|mandiri|shopee|tokopedia|lazada|gmail|facebook|instagram|tiktok)\b/i.test(input);
 }
@@ -94,7 +99,8 @@ router.post('/webhook', async (req, res) => {
     let convo = db.getConversation(phone);
 
     // Kalau status done & user chat lagi → reset ke awal
-    if (convo.status === 'done') {
+    const wasDone = convo.status === 'done';
+    if (wasDone) {
       db.updateStatus(phone, 'ai');
       db.resetMenuState(phone);
       broadcast('status_change', { phone, status: 'ai' });
@@ -117,7 +123,11 @@ router.post('/webhook', async (req, res) => {
 
     let replyText = '';
 
-    if (menuState === 'awaiting_escalation_confirmation') {
+    if (wasDone && isNewIssueIntent(userText)) {
+      replyText = 'Baik Sobat, silakan pilih topik kendala baru dari menu berikut.\n\n' + buildMenuText();
+    }
+
+    if (!replyText && menuState === 'awaiting_escalation_confirmation') {
       if (isClosingIntent(userText)) {
         db.updateStatus(phone, 'done');
         db.resetMenuState(phone);
@@ -146,7 +156,7 @@ router.post('/webhook', async (req, res) => {
     }
 
     // LOGIC: Jika user input angka (Pilih Menu)
-    if (isValidMenuChoice(userText)) {
+    if (!replyText && isValidMenuChoice(userText)) {
       const num = parseInt(userText.trim(), 10);
       const chosen = getMenuItem(num);
 
@@ -169,11 +179,11 @@ router.post('/webhook', async (req, res) => {
       replyText = await askAIWithFallback(convo.messages, context, phone);
     } 
     // Jika user minta menu secara eksplisit
-    else if (['menu', 'bantuan', 'pilihan', 'help'].includes(userLower)) {
+    else if (!replyText && ['menu', 'bantuan', 'pilihan', 'help'].includes(userLower)) {
       db.resetMenuState(phone);
       replyText = buildMenuText();
     }
-    else if (isClosingIntent(userText)) {
+    else if (!replyText && isClosingIntent(userText)) {
       db.updateStatus(phone, 'done');
       db.resetMenuState(phone);
       broadcast('status_change', { phone, status: 'done' });
@@ -181,7 +191,7 @@ router.post('/webhook', async (req, res) => {
       return;
     }
     // Percakapan Natural (Bukan angka, bukan kata kunci menu)
-    else {
+    else if (!replyText) {
       // Selalu coba cari context relevan
       const context = retrieve(userText);
       const externalTopic = isExternalTopic(userText);
