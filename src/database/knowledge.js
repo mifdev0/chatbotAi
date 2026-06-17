@@ -18,55 +18,99 @@ db.exec(`
   )
 `);
 
-// Seed data awal jika tabel kosong
-const count = db.prepare('SELECT COUNT(*) as c FROM knowledge').get();
-if (count.c === 0) {
-  const insert = db.prepare('INSERT INTO knowledge (topik, konten) VALUES (?, ?)');
+const seedData = [
+  [
+    'Lupa Password Akun',
+    `LUPA PASSWORD AKUN:
+- Jika pengguna lupa password akun (email/SSO), silakan datang langsung ke:
+  Gedung Induk Siti Walidah Lantai 5
+- Wajib membawa KTM/Kartu Identitas
+- Password tidak dapat direset melalui chatbot`
+  ],
+  [
+    'Verifikasi 2 Langkah (2FA)',
+    `VERIFIKASI 2 LANGKAH (2FA):
+- Jika mengalami kendala verifikasi 2 langkah, silakan mengisi form berikut:
+  https://docs.google.com/forms/d/e/1FAIpQLSequkIeXRtnA6M9p2L6Rh5cPKeUVG0IpvQkNvpSRY637NFipw/viewform
+- Tim IT akan membantu proses penautan nomor HP`
+  ],
+  [
+    'Login Email Kampus',
+    `LOGIN EMAIL KAMPUS:
+- Format email mahasiswa: nim@student.ums.ac.id
+- Format email dosen/staf: nama@ums.ac.id
+- Akses melalui Gmail atau mail.ums.ac.id
+- Password email sama dengan password SSO kampus
+- Jika lupa password, silakan datang ke Gedung Induk Siti Walidah Lt. 5`
+  ],
+  [
+    'Login MyAkademik',
+    `LOGIN MYAKADEMIK (STAR, MySkripsi, MBKM, Wisuda):
+1. Buka myakademik.ums.ac.id
+2. Pilih menu "Login SSO"
+3. Masukkan NIM
+4. Masukkan password akun
+5. Klik login
+6. Setelah masuk, pilih menu sesuai kebutuhan:
+   - STAR -> pilih menu STAR
+   - MySkripsi -> pilih menu MySkripsi
+   - MBKM -> pilih menu MyMBKM
+   - Wisuda -> pilih menu Wisuda`
+  ],
+  [
+    'Login STAR Parent',
+    `LOGIN STAR PARENT:
+1. Buka star-parent.ums.ac.id
+2. Masukkan username: NIM
+3. Masukkan password: NIM
+4. Klik login`
+  ],
+  [
+    'WiFi Kampus',
+    `WIFI KAMPUS:
+1. Aktifkan WiFi pada perangkat Anda
+2. Pastikan berada di area jangkauan jaringan kampus
+3. Pilih jaringan: UMS WIFI
+4. Masukkan password: ums.wifi`
+  ],
+  [
+    'SPADA',
+    `SPADA (Sistem Pembelajaran Daring):
+Cara akses:
+1. Buka spada12.ums.ac.id
+2. Klik "Login CAS"
+3. Masukkan akun SSO kampus
+4. Klik login
 
-  const seedData = [
-    [
-      'Lupa Password Akun',
-      `LUPA PASSWORD AKUN:
-- Jika Anda lupa password akun, silakan gunakan fitur "Lupa Password" di halaman login aplikasi.
-- Ikuti instruksi yang dikirimkan ke email pemulihan Anda.
-- Jika masih mengalami kendala, silakan hubungi tim administrasi di kantor pusat.`
-    ],
-    [
-      'Verifikasi 2 Langkah (2FA)',
-      `VERIFIKASI 2 LANGKAH (2FA):
-- Verifikasi 2 langkah diperlukan untuk keamanan akun Anda.
-- Anda dapat mengaktifkannya melalui menu Pengaturan Keamanan.
-- Jika kehilangan akses ke perangkat autentikasi, silakan hubungi tim bantuan untuk reset 2FA.`
-    ],
-    [
-      'Login Akun',
-      `LOGIN AKUN LAYANAN:
-- Pastikan Anda menggunakan username/email yang telah terdaftar.
-- Masukkan password dengan benar (perhatikan huruf kapital).
-- Jika akun Anda terkunci karena salah password berkali-kali, tunggu 30 menit atau hubungi bantuan.`
-    ],
-    [
-      'Internet',
-      `MASALAH KONEKSI INTERNET:
-1. Pastikan perangkat Anda terhubung ke jaringan yang benar.
-2. Jika menggunakan WiFi kantor/layanan, pastikan Anda telah memasukkan kredensial yang valid.
-3. Coba restart koneksi WiFi pada perangkat Anda atau restart perangkat jika diperlukan.`
-    ],
-    [
-      'Layanan Digital',
-      `PANDUAN LAYANAN DIGITAL:
-- Akses semua layanan melalui portal resmi kami.
-- Gunakan peramban (browser) versi terbaru untuk pengalaman terbaik.
-- Jika layanan tidak dapat diakses, periksa status pemeliharaan sistem pada halaman pengumuman.`
-    ]
-  ];
+Kendala di SPADA:
+- Mahasiswa tidak bisa akses kelas/materi -> hubungi dosen mata kuliah terkait
+- Dosen tidak bisa memasukkan/mengelola konten -> datang ke LPPIP UMS di Gedung Siti Walidah Lantai 4`
+  ]
+];
 
-  for (const [topik, konten] of seedData) {
-    insert.run(topik, konten);
+function syncSeedData() {
+  const genericTopics = ['Login Akun', 'Internet', 'Layanan Digital'];
+  const deactivate = db.prepare('UPDATE knowledge SET aktif = 0 WHERE topik = ?');
+  const findByTopic = db.prepare('SELECT id FROM knowledge WHERE topik = ?');
+  const insert = db.prepare('INSERT INTO knowledge (topik, konten, aktif) VALUES (?, ?, 1)');
+  const update = db.prepare('UPDATE knowledge SET konten = ?, aktif = 1 WHERE topik = ?');
+
+  for (const topic of genericTopics) {
+    deactivate.run(topic);
   }
 
-  console.log('[DB] Knowledge base berhasil di-seed');
+  for (const [topik, konten] of seedData) {
+    const existing = findByTopic.get(topik);
+    if (existing) {
+      update.run(konten, topik);
+    } else {
+      insert.run(topik, konten);
+    }
+  }
 }
+
+syncSeedData();
+console.log('[DB] Knowledge base IT Helpdesk UMS berhasil disinkronkan');
 
 // Ambil semua knowledge yang aktif
 function getAllKnowledge() {
