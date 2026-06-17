@@ -55,19 +55,13 @@ router.get('/webhook', (req, res) => {
   res.status(200).send('Webhook is active');
 });
 
-async function handleIncomingWebhook(req, res) {
+router.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 
   try {
-    console.log(`[WEBHOOK HIT] ${req.method} ${req.originalUrl} keys=${Object.keys(req.body || {}).join(',')}`);
-
     // Format Fonnte webhook
     const { device, message, pushname } = req.body;
-    if (!message) {
-      console.log('[WEBHOOK IGNORED] Payload tidak memiliki field message');
-      return;
-    }
-    if (device === 'sender') return; // Skip pesan dari bot sendiri
+    if (!message || device === 'sender') return; // Skip pesan dari bot sendiri
 
     // Deduplikasi
     const msgId = req.body.id;
@@ -223,9 +217,6 @@ async function handleIncomingWebhook(req, res) {
   } catch (err) {
     console.error('[Webhook Error]', err.message);
   }
-}
-
-router.post('/webhook', handleIncomingWebhook);
-router.post('/', handleIncomingWebhook);
+});
 
 module.exports = router;
