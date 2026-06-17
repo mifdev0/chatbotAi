@@ -3,16 +3,18 @@
 const MENU_ITEMS = [
   { label: 'Lupa Password / Reset Akun',    topik: 'Lupa Password Akun' },
   { label: 'Verifikasi 2 Langkah (2FA)',    topik: 'Verifikasi 2 Langkah (2FA)' },
-  { label: 'Login Akun Layanan',            topik: 'Login Akun' },
-  { label: 'Masalah Koneksi Internet',      topik: 'Internet' },
-  { label: 'Panduan Layanan Digital',       topik: 'Layanan Digital' },
+  { label: 'Login Email Kampus',            topik: 'Login Email Kampus' },
+  { label: 'Login MyAkademik',              topik: 'Login MyAkademik' },
+  { label: 'Login STAR Parent',             topik: 'Login STAR Parent' },
+  { label: 'WiFi Kampus',                   topik: 'WiFi Kampus' },
+  { label: 'SPADA',                         topik: 'SPADA' },
   { label: 'Masalah lain / Chat dengan Admin', topik: null }, // eskalasi manual
 ];
 
 function buildMenuText() {
   const lines = MENU_ITEMS.map((item, i) => `${i + 1}. ${item.label}`);
   return (
-    `Halo Sobat! 👋 Selamat datang di *Asisten AI*.\n\n` +
+    `Halo Sobat! Selamat datang di *Asisten AI IT Helpdesk UMS*.\n\n` +
     `Silakan pilih topik kendala Anda dengan membalas *angka* berikut:\n\n` +
     lines.join('\n') +
     `\n\nKetik angka pilihan Anda (contoh: *1*)`
