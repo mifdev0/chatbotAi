@@ -168,9 +168,9 @@
         <input class="w-full bg-[#f0f2f5] border-none rounded-xl pl-[36px] pr-sm py-2.5 text-body-md focus:ring-2 focus:ring-primary transition-all outline-none" placeholder="Cari percakapan..." type="text" id="searchConvo" oninput="filterConversations()">
       </div>
       <div class="flex gap-lg mt-md">
-        <button class="text-primary font-bold border-b-2 border-primary pb-2 text-[14px]" data-filter="all" onclick="setActiveFilter('all', this)">Semua</button>
-        <button class="text-on-surface-variant pb-2 text-[14px] hover:text-primary transition-colors" data-filter="escalated" onclick="setActiveFilter('escalated', this)">Eskalasi</button>
-        <button class="text-on-surface-variant pb-2 text-[14px] hover:text-primary transition-colors" data-filter="done" onclick="setActiveFilter('done', this)">Selesai</button>
+        <button class="text-primary font-bold border-b-2 border-primary pb-2 text-[14px] inline-flex items-center gap-1.5" data-filter="all" onclick="setActiveFilter('all', this)">Semua <span id="badgeAll" class="min-w-5 px-1.5 py-0.5 rounded-full bg-[#1456f5] text-white text-[10px] leading-none text-center">0</span></button>
+        <button class="text-on-surface-variant pb-2 text-[14px] hover:text-primary transition-colors inline-flex items-center gap-1.5" data-filter="escalated" onclick="setActiveFilter('escalated', this)">Eskalasi <span id="badgeEsc" class="min-w-5 px-1.5 py-0.5 rounded-full bg-[#ffdad6] text-[#ba1a1a] text-[10px] leading-none text-center">0</span></button>
+        <button class="text-on-surface-variant pb-2 text-[14px] hover:text-primary transition-colors inline-flex items-center gap-1.5" data-filter="done" onclick="setActiveFilter('done', this)">Selesai <span id="badgeDone" class="min-w-5 px-1.5 py-0.5 rounded-full bg-[#d4edda] text-[#155724] text-[10px] leading-none text-center">0</span></button>
       </div>
     </div>
 
@@ -468,6 +468,12 @@ function handleSocketMessage(event, data) {
       updateStatsUI();
       if (activePhoneKey === data.phone) renderChatHeader();
     }
+  } else if (event === 'conversation_deleted') {
+    conversationsMap.delete(data.phone);
+    if (activePhoneKey === data.phone) clearActiveConversation();
+    renderConversationList();
+    updateStatsUI();
+    showToast('Percakapan selesai dan dihapus dari inbox');
   }
 }
 
@@ -526,6 +532,27 @@ function selectConversation(phone) {
   document.getElementById('sendButton').disabled = false;
   document.getElementById('actionButtons').style.display = 'flex';
   document.getElementById('emptyChatState').style.display = 'none';
+}
+
+function clearActiveConversation() {
+  activePhoneKey = null;
+  document.getElementById('chatAvatar').textContent = '?';
+  document.getElementById('chatName').textContent = 'Pilih Percakapan';
+  document.getElementById('chatStatusMeta').textContent = 'Pilih chat di sebelah kiri';
+  document.getElementById('headerStatusChip').className = 'hidden';
+  document.getElementById('actionButtons').style.display = 'none';
+  document.getElementById('staffReplyInput').value = '';
+  document.getElementById('staffReplyInput').disabled = true;
+  document.getElementById('sendButton').disabled = true;
+  document.getElementById('chatMessagesArea').innerHTML = `
+    <div class="flex-1 flex flex-col items-center justify-center text-on-surface-variant gap-4 opacity-50 py-20" id="emptyChatState">
+      <div class="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-sm border border-outline-variant">
+        <span class="material-symbols-outlined text-[48px] text-[#1456f5] fill">forum</span>
+      </div>
+      <h2 class="text-[20px] font-bold text-on-surface">Pilih Percakapan</h2>
+      <p class="text-[14px]">Klik chat untuk mulai membalas.</p>
+    </div>
+  `;
 }
 
 function renderChatHeader() {
@@ -588,21 +615,32 @@ function updateConversationStatus(status) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status })
-  }).then(() => showToast('Status diperbarui')).catch(() => showToast('Gagal update'));
+  }).then(() => showToast(status === 'done' ? 'Task selesai dan dihapus' : 'Status diperbarui')).catch(() => showToast('Gagal update'));
+}
+
+function getFilterClass(active) {
+  return active
+    ? 'text-primary font-bold border-b-2 border-primary pb-2 text-[14px] inline-flex items-center gap-1.5'
+    : 'text-on-surface-variant pb-2 text-[14px] hover:text-primary transition-colors inline-flex items-center gap-1.5';
 }
 
 function setActiveFilter(f, el) {
   currentFilter = f;
-  document.querySelectorAll('[data-filter]').forEach(b => b.className = 'text-on-surface-variant pb-2 text-[14px] hover:text-primary transition-colors');
-  el.className = 'text-primary font-bold border-b-2 border-primary pb-2 text-[14px]';
+  document.querySelectorAll('[data-filter]').forEach(b => b.className = getFilterClass(b === el));
   renderConversationList();
 }
 function filterConversations() { searchQuery = document.getElementById('searchConvo').value.trim().toLowerCase(); renderConversationList(); }
 function updateStatsUI() {
   const all = Array.from(conversationsMap.values());
-  document.getElementById('statTotal').textContent = all.length;
-  document.getElementById('statEsc').textContent = all.filter(c => c.status === 'escalated').length;
-  document.getElementById('statDone').textContent = all.filter(c => c.status === 'done').length;
+  const total = all.length;
+  const escalated = all.filter(c => c.status === 'escalated').length;
+  const done = all.filter(c => c.status === 'done').length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statEsc').textContent = escalated;
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('badgeAll').textContent = total;
+  document.getElementById('badgeEsc').textContent = escalated;
+  document.getElementById('badgeDone').textContent = done;
   renderTickets();
 }
 

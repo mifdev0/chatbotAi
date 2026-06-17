@@ -6,6 +6,7 @@ const config = require('../config/env');
 const DB_PATH = path.resolve(config.database.conversations);
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 const db = new Database(DB_PATH);
+db.pragma('foreign_keys = ON');
 
 // Buat tabel jika belum ada
 db.exec(`
@@ -35,6 +36,23 @@ db.exec(`
 `);
 
 console.log('[DB] Conversations database initialized');
+
+function deleteCompletedConversations() {
+  const doneRows = db.prepare("SELECT phone FROM conversations WHERE status = 'done'").all();
+  const deleteMessages = db.prepare('DELETE FROM messages WHERE phone = ?');
+  const deleteConversation = db.prepare('DELETE FROM conversations WHERE phone = ?');
+
+  for (const row of doneRows) {
+    deleteMessages.run(row.phone);
+    deleteConversation.run(row.phone);
+  }
+
+  if (doneRows.length) {
+    console.log(`[DB] ${doneRows.length} completed conversations cleaned`);
+  }
+}
+
+deleteCompletedConversations();
 
 // Ambil semua percakapan (untuk dashboard)
 function getAllConversations() {
@@ -145,6 +163,11 @@ function resetMenuState(phone) {
   `).run(now, phone);
 }
 
+function deleteConversation(phone) {
+  db.prepare('DELETE FROM messages WHERE phone = ?').run(phone);
+  return db.prepare('DELETE FROM conversations WHERE phone = ?').run(phone);
+}
+
 module.exports = {
   getAllConversations,
   getConversation,
@@ -153,4 +176,5 @@ module.exports = {
   updateStatus,
   setMenuState,
   resetMenuState,
+  deleteConversation,
 };

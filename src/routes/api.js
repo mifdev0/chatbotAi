@@ -160,6 +160,12 @@ router.patch('/conversations/:phone/status', (req, res) => {
   if (!['ai', 'escalated', 'done'].includes(status)) {
     return res.status(400).json({ error: 'Invalid status' });
   }
+  if (status === 'done') {
+    db.deleteConversation(phone);
+    broadcast('conversation_deleted', { phone });
+    return res.json({ ok: true, deleted: true });
+  }
+
   db.updateStatus(phone, status);
   broadcast('status_change', { phone, status });
   res.json({ ok: true });

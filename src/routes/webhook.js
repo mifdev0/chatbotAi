@@ -63,6 +63,11 @@ async function sendBotReply(phone, replyText) {
   await sendMessage(phone, replyText);
 }
 
+function deleteTask(phone) {
+  db.deleteConversation(phone);
+  broadcast('conversation_deleted', { phone });
+}
+
 router.get('/webhook', (req, res) => {
   res.status(200).send('Webhook is active');
 });
@@ -129,10 +134,8 @@ router.post('/webhook', async (req, res) => {
 
     if (!replyText && menuState === 'awaiting_escalation_confirmation') {
       if (isClosingIntent(userText)) {
-        db.updateStatus(phone, 'done');
-        db.resetMenuState(phone);
-        broadcast('status_change', { phone, status: 'done' });
         await sendBotReply(phone, CLOSING_REPLY);
+        deleteTask(phone);
         return;
       }
 
@@ -184,10 +187,8 @@ router.post('/webhook', async (req, res) => {
       replyText = buildMenuText();
     }
     else if (!replyText && isClosingIntent(userText)) {
-      db.updateStatus(phone, 'done');
-      db.resetMenuState(phone);
-      broadcast('status_change', { phone, status: 'done' });
       await sendBotReply(phone, CLOSING_REPLY);
+      deleteTask(phone);
       return;
     }
     // Percakapan Natural (Bukan angka, bukan kata kunci menu)
@@ -224,9 +225,6 @@ router.post('/webhook', async (req, res) => {
     const isDone = replyText.toLowerCase().includes('bit.ly/survey-layanan-ai') || 
                    replyText.toLowerCase().includes('survey-layanan-ai');
     if (isDone) {
-      db.updateStatus(phone, 'done');
-      db.resetMenuState(phone);
-      broadcast('status_change', { phone, status: 'done' });
       console.log(`[SELESAI] ${name} (${phone})`);
     }
     else if (replyText.includes('Apakah Sobat ingin saya hubungkan dengan admin?')) {
@@ -245,6 +243,10 @@ router.post('/webhook', async (req, res) => {
 
     await sendMessage(phone, replyText);
     console.log(`[OUT] AI → ${name}: ${replyText.substring(0, 60)}...`);
+
+    if (isDone) {
+      deleteTask(phone);
+    }
 
   } catch (err) {
     console.error('[Webhook Error]', err.message);
