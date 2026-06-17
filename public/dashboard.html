@@ -127,21 +127,21 @@
     <div class="w-9 h-9 rounded-xl bg-[#1456f5] flex items-center justify-center text-white font-bold text-xs shadow-lg">AI</div>
   </div>
   <div class="flex flex-col gap-4">
-    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl">
+    <button class="nav-btn flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" data-view="overview" onclick="setView('overview')" title="Ringkasan">
       <span class="material-symbols-outlined">grid_view</span>
     </button>
-    <button class="flex items-center justify-center bg-[#1456f5] text-white rounded-full w-10 h-10 shadow-md">
+    <button class="nav-btn flex items-center justify-center bg-[#1456f5] text-white rounded-full w-10 h-10 shadow-md" data-view="chat" onclick="setView('chat')" title="Percakapan">
       <span class="material-symbols-outlined fill">chat_bubble</span>
     </button>
-    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl">
+    <button class="nav-btn flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" data-view="tickets" onclick="setView('tickets')" title="Tiket Eskalasi">
       <span class="material-symbols-outlined">confirmation_number</span>
     </button>
-    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl">
+    <button class="nav-btn flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" data-view="analytics" onclick="setView('analytics')" title="Analisis">
       <span class="material-symbols-outlined">analytics</span>
     </button>
   </div>
   <div class="mt-auto flex flex-col gap-4">
-    <button class="flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl">
+    <button class="nav-btn flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl" data-view="settings" onclick="setView('settings')" title="Pengaturan">
       <span class="material-symbols-outlined">settings</span>
     </button>
     <a href="/auth/logout" class="flex items-center justify-center text-error w-10 h-10 hover:bg-error-container transition-colors rounded-xl">  
@@ -151,7 +151,7 @@
 </nav>
 
 <!-- Main Wrapper -->
-<div class="flex-1 flex ml-[56px] h-full overflow-hidden">
+<div class="view-panel flex-1 flex ml-[56px] h-full overflow-hidden" id="chatView" data-view-panel="chat">
 
   <!-- Sidebar Daftar Percakapan (Kolom Tengah) -->
   <aside class="w-[360px] bg-white border-r border-outline-variant flex flex-col h-full flex-shrink-0">
@@ -262,6 +262,106 @@
 
 </div>
 
+<section class="view-panel hidden flex-1 ml-[56px] h-full overflow-y-auto bg-background" id="overviewView" data-view-panel="overview">
+  <div class="max-w-7xl mx-auto p-lg">
+    <div class="flex items-center justify-between mb-lg">
+      <div>
+        <h1 class="text-display text-on-surface">Ringkasan Operasional</h1>
+        <p class="text-body-md text-on-surface-variant">Pantau kondisi layanan WhatsApp helpdesk hari ini.</p>
+      </div>
+      <button class="px-4 py-2 bg-[#1456f5] text-white rounded-lg text-[13px] font-bold flex items-center gap-2" onclick="refreshDashboardData()">
+        <span class="material-symbols-outlined text-[18px]">refresh</span> Muat Ulang
+      </button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-md mb-lg" id="overviewCards"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+      <div class="lg:col-span-2 bg-white border border-outline-variant rounded-xl p-lg">
+        <div class="flex items-center justify-between mb-md">
+          <h2 class="text-h2">Aktivitas 7 Hari</h2>
+          <span class="text-[12px] text-on-surface-variant">Percakapan dan pesan</span>
+        </div>
+        <div class="h-[260px] flex items-end gap-3" id="overviewChart"></div>
+      </div>
+      <div class="bg-white border border-outline-variant rounded-xl p-lg">
+        <h2 class="text-h2 mb-md">Prioritas Admin</h2>
+        <div class="space-y-3" id="priorityList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view-panel hidden flex-1 ml-[56px] h-full overflow-y-auto bg-background" id="ticketsView" data-view-panel="tickets">
+  <div class="max-w-7xl mx-auto p-lg">
+    <div class="flex items-center justify-between mb-lg">
+      <div>
+        <h1 class="text-display text-on-surface">Tiket Eskalasi</h1>
+        <p class="text-body-md text-on-surface-variant">Daftar chat yang perlu ditangani admin.</p>
+      </div>
+      <button class="px-4 py-2 border border-outline-variant bg-white rounded-lg text-[13px] font-bold flex items-center gap-2" onclick="setView('chat')">
+        <span class="material-symbols-outlined text-[18px]">forum</span> Buka Chat
+      </button>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-md" id="ticketList"></div>
+  </div>
+</section>
+
+<section class="view-panel hidden flex-1 ml-[56px] h-full overflow-y-auto bg-background" id="analyticsView" data-view-panel="analytics">
+  <div class="max-w-7xl mx-auto p-lg">
+    <div class="flex items-center justify-between mb-lg">
+      <div>
+        <h1 class="text-display text-on-surface">Analisis Layanan</h1>
+        <p class="text-body-md text-on-surface-variant">Metrik performa AI, eskalasi, dan penyelesaian.</p>
+      </div>
+      <button class="px-4 py-2 bg-[#1456f5] text-white rounded-lg text-[13px] font-bold flex items-center gap-2" onclick="loadAnalytics()">
+        <span class="material-symbols-outlined text-[18px]">query_stats</span> Perbarui
+      </button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-lg" id="analyticsCards"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+      <div class="bg-white border border-outline-variant rounded-xl p-lg">
+        <h2 class="text-h2 mb-md">Distribusi Pesan</h2>
+        <div id="messageBreakdown" class="space-y-4"></div>
+      </div>
+      <div class="bg-white border border-outline-variant rounded-xl p-lg">
+        <h2 class="text-h2 mb-md">Topik Teratas</h2>
+        <div id="topTopics" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view-panel hidden flex-1 ml-[56px] h-full overflow-y-auto bg-background" id="settingsView" data-view-panel="settings">
+  <div class="max-w-7xl mx-auto p-lg">
+    <div class="mb-lg">
+      <h1 class="text-display text-on-surface">Pengaturan</h1>
+      <p class="text-body-md text-on-surface-variant">Kelola knowledge base dan cek konfigurasi sistem.</p>
+    </div>
+    <div class="grid grid-cols-1 xl:grid-cols-[420px_1fr] gap-md">
+      <div class="space-y-md">
+        <div class="bg-white border border-outline-variant rounded-xl p-lg">
+          <h2 class="text-h2 mb-md">Tambah Knowledge</h2>
+          <input id="knowledgeTopic" class="w-full bg-[#f0f2f5] border border-outline-variant rounded-lg px-sm py-2 text-[14px] mb-sm" placeholder="Topik">
+          <textarea id="knowledgeContent" class="w-full min-h-[160px] bg-[#f0f2f5] border border-outline-variant rounded-lg px-sm py-2 text-[14px]" placeholder="Isi panduan / jawaban resmi"></textarea>
+          <button class="mt-md w-full px-4 py-2 bg-[#1456f5] text-white rounded-lg text-[13px] font-bold flex items-center justify-center gap-2" onclick="saveKnowledge()">
+            <span class="material-symbols-outlined text-[18px]">save</span> Simpan Knowledge
+          </button>
+        </div>
+        <div class="bg-white border border-outline-variant rounded-xl p-lg">
+          <h2 class="text-h2 mb-md">Status Konfigurasi</h2>
+          <div id="settingsStatus" class="space-y-3 text-[13px]"></div>
+        </div>
+      </div>
+      <div class="bg-white border border-outline-variant rounded-xl p-lg">
+        <div class="flex items-center justify-between mb-md">
+          <h2 class="text-h2">Knowledge Base Aktif</h2>
+          <button class="px-3 py-1.5 border border-outline-variant rounded-lg text-[13px] font-bold" onclick="loadKnowledge()">Refresh</button>
+        </div>
+        <div id="knowledgeList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Global Toast -->
 <div id="globalToast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-[#1f2329] text-white px-6 py-3 rounded-2xl text-[13px] font-bold shadow-2xl opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-[100]"></div>
 
@@ -271,8 +371,45 @@ let conversationsMap = new Map();
 let activePhoneKey = null;
 let currentFilter = 'all';
 let searchQuery = '';
+let analyticsCache = null;
+let editingKnowledgeId = null;
+let knowledgeRows = [];
 
 function getApiBase() { return window.location.origin; }
+
+function setView(view) {
+  document.querySelectorAll('[data-view-panel]').forEach(panel => {
+    panel.classList.toggle('hidden', panel.dataset.viewPanel !== view);
+    panel.classList.toggle('flex', panel.dataset.viewPanel === view && view === 'chat');
+  });
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const active = btn.dataset.view === view;
+    btn.className = active
+      ? 'nav-btn flex items-center justify-center bg-[#1456f5] text-white rounded-full w-10 h-10 shadow-md'
+      : 'nav-btn flex items-center justify-center text-on-surface-variant w-10 h-10 hover:bg-surface-container-high transition-colors rounded-xl';
+  });
+  if (view === 'overview') loadAnalytics();
+  if (view === 'tickets') renderTickets();
+  if (view === 'analytics') loadAnalytics();
+  if (view === 'settings') { loadSettings(); loadKnowledge(); }
+}
+
+async function refreshDashboardData() {
+  try {
+    const res = await fetch(getApiBase() + '/api/conversations');
+    if (!res.ok) throw new Error('Gagal memuat percakapan');
+    const data = await res.json();
+    conversationsMap.clear();
+    data.forEach(c => conversationsMap.set(c.phone, c));
+    renderConversationList();
+    updateStatsUI();
+    renderTickets();
+    await loadAnalytics();
+    showToast('Data dashboard diperbarui');
+  } catch (err) {
+    showToast(err.message || 'Gagal memuat data');
+  }
+}
 
 function connectWebSocket() {
   if (socket) { try { socket.close(); } catch (e) {} }
@@ -466,12 +603,259 @@ function updateStatsUI() {
   document.getElementById('statTotal').textContent = all.length;
   document.getElementById('statEsc').textContent = all.filter(c => c.status === 'escalated').length;
   document.getElementById('statDone').textContent = all.filter(c => c.status === 'done').length;
+  renderTickets();
 }
+
+async function loadAnalytics() {
+  try {
+    const res = await fetch(getApiBase() + '/api/analytics');
+    if (!res.ok) throw new Error('Gagal memuat analytics');
+    analyticsCache = await res.json();
+    renderOverview();
+    renderAnalytics();
+  } catch (err) {
+    showToast(err.message || 'Gagal memuat analytics');
+  }
+}
+
+function metricCard(label, value, icon, tone) {
+  return `
+    <div class="bg-white border border-outline-variant rounded-xl p-md">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[13px] text-on-surface-variant">${label}</span>
+        <span class="material-symbols-outlined text-[20px] ${tone}">${icon}</span>
+      </div>
+      <div class="text-[28px] font-bold text-on-surface">${value}</div>
+    </div>
+  `;
+}
+
+function renderOverview() {
+  if (!analyticsCache) return;
+  const cards = document.getElementById('overviewCards');
+  if (cards) {
+    cards.innerHTML = [
+      metricCard('Total Percakapan', analyticsCache.totalConversations, 'forum', 'text-primary'),
+      metricCard('Aktif AI', analyticsCache.activeConversations, 'smart_toy', 'text-info'),
+      metricCard('Eskalasi', analyticsCache.escalatedConversations, 'priority_high', 'text-warning'),
+      metricCard('Selesai', analyticsCache.doneConversations, 'check_circle', 'text-success'),
+    ].join('');
+  }
+
+  const chart = document.getElementById('overviewChart');
+  if (chart) {
+    const maxValue = Math.max(1, ...analyticsCache.daily.map(day => Math.max(day.conversations, day.messages)));
+    chart.innerHTML = analyticsCache.daily.map(day => {
+      const msgHeight = Math.max(8, Math.round((day.messages / maxValue) * 210));
+      const convHeight = Math.max(8, Math.round((day.conversations / maxValue) * 210));
+      return `
+        <div class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2">
+          <div class="w-full flex items-end justify-center gap-1 h-[220px]">
+            <div title="${day.messages} pesan" class="w-5 rounded-t bg-[#1456f5]" style="height:${msgHeight}px"></div>
+            <div title="${day.conversations} percakapan" class="w-5 rounded-t bg-[#10B981]" style="height:${convHeight}px"></div>
+          </div>
+          <span class="text-[11px] text-on-surface-variant">${day.label}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const priorities = document.getElementById('priorityList');
+  if (priorities) {
+    const escalated = Array.from(conversationsMap.values()).filter(c => c.status === 'escalated').slice(0, 5);
+    priorities.innerHTML = escalated.length ? escalated.map(c => `
+      <button class="w-full text-left p-3 rounded-lg border border-outline-variant hover:bg-[#f8f9ff]" onclick="openConversationFromPanel('${c.phone}')">
+        <div class="flex items-center justify-between gap-3">
+          <span class="font-bold text-[14px] truncate">${escapeHtml(c.name || c.phone)}</span>
+          <span class="text-[11px] text-warning font-bold">Eskalasi</span>
+        </div>
+        <p class="text-[12px] text-on-surface-variant truncate mt-1">${escapeHtml(c.messages?.length ? c.messages[c.messages.length - 1].text : 'Belum ada pesan')}</p>
+      </button>
+    `).join('') : '<div class="text-[13px] text-on-surface-variant">Tidak ada tiket eskalasi aktif.</div>';
+  }
+}
+
+function renderAnalytics() {
+  if (!analyticsCache) return;
+  const cards = document.getElementById('analyticsCards');
+  if (cards) {
+    cards.innerHTML = [
+      metricCard('Resolution Rate', analyticsCache.resolutionRate + '%', 'task_alt', 'text-success'),
+      metricCard('Escalation Rate', analyticsCache.escalationRate + '%', 'support_agent', 'text-warning'),
+      metricCard('Rata-rata Pesan', analyticsCache.averageMessagesPerConversation, 'chat', 'text-primary'),
+    ].join('');
+  }
+
+  const breakdown = document.getElementById('messageBreakdown');
+  if (breakdown) {
+    const total = Math.max(1, analyticsCache.totalMessages);
+    const rows = [
+      ['User', analyticsCache.userMessages, 'bg-[#1456f5]'],
+      ['AI', analyticsCache.aiMessages, 'bg-[#10B981]'],
+      ['Admin', analyticsCache.staffMessages, 'bg-[#F59E0B]'],
+    ];
+    breakdown.innerHTML = rows.map(([label, value, color]) => `
+      <div>
+        <div class="flex justify-between text-[13px] mb-1">
+          <span class="font-bold">${label}</span><span>${value} pesan</span>
+        </div>
+        <div class="h-3 bg-surface-container rounded-full overflow-hidden">
+          <div class="h-full ${color}" style="width:${Math.round((value / total) * 100)}%"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const topics = document.getElementById('topTopics');
+  if (topics) {
+    topics.innerHTML = analyticsCache.topTopics.length ? analyticsCache.topTopics.map(item => `
+      <div class="flex items-center justify-between p-3 rounded-lg bg-[#f8f9ff] border border-outline-variant">
+        <span class="text-[13px] font-bold">${escapeHtml(item.topic)}</span>
+        <span class="text-[12px] text-on-surface-variant">${item.count} percakapan</span>
+      </div>
+    `).join('') : '<div class="text-[13px] text-on-surface-variant">Belum ada data topik.</div>';
+  }
+}
+
+function renderTickets() {
+  const list = document.getElementById('ticketList');
+  if (!list) return;
+  const escalated = Array.from(conversationsMap.values())
+    .filter(c => c.status === 'escalated')
+    .sort((a, b) => b.updatedAt - a.updatedAt);
+  if (!escalated.length) {
+    list.innerHTML = '<div class="lg:col-span-2 bg-white border border-outline-variant rounded-xl p-lg text-center text-on-surface-variant">Tidak ada tiket eskalasi aktif.</div>';
+    return;
+  }
+  list.innerHTML = escalated.map(c => {
+    const lastMsg = c.messages?.length ? c.messages[c.messages.length - 1] : null;
+    return `
+      <div class="bg-white border border-outline-variant rounded-xl p-lg">
+        <div class="flex items-start justify-between gap-4 mb-md">
+          <div class="min-w-0">
+            <h2 class="text-h3 truncate">${escapeHtml(c.name || c.phone)}</h2>
+            <p class="text-[12px] text-on-surface-variant">${escapeHtml(c.phone)}</p>
+          </div>
+          <span class="px-2 py-1 bg-[#ffdad6] text-[#ba1a1a] rounded-md text-[10px] font-bold uppercase">Eskalasi</span>
+        </div>
+        <p class="min-h-[52px] text-[14px] text-on-surface-variant bg-[#f8f9ff] rounded-lg p-3">${escapeHtml(lastMsg ? lastMsg.text : 'Belum ada pesan')}</p>
+        <div class="mt-md flex items-center justify-between">
+          <span class="text-[12px] text-on-surface-variant">${formatTime(c.updatedAt)} · ${c.messages?.length || 0} pesan</span>
+          <button class="px-3 py-1.5 bg-[#1456f5] text-white rounded-lg text-[13px] font-bold" onclick="openConversationFromPanel('${c.phone}')">Tangani</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openConversationFromPanel(phone) {
+  setView('chat');
+  selectConversation(phone);
+}
+
+async function loadSettings() {
+  try {
+    const res = await fetch(getApiBase() + '/api/settings');
+    if (!res.ok) throw new Error('Gagal memuat settings');
+    const settings = await res.json();
+    const target = document.getElementById('settingsStatus');
+    target.innerHTML = [
+      ['AI API Key', settings.ai.apiKeyConfigured ? 'Terpasang' : 'Belum ada', settings.ai.apiKeyConfigured],
+      ['Fonnte Token', settings.whatsapp.tokenConfigured ? 'Terpasang' : 'Belum ada', settings.whatsapp.tokenConfigured],
+      ['Model AI', settings.ai.model, true],
+      ['Webhook', window.location.origin + settings.server.webhookPath, true],
+      ['Admin', settings.admin.username, true],
+    ].map(([label, value, ok]) => `
+      <div class="flex items-center justify-between gap-3 p-3 bg-[#f8f9ff] rounded-lg border border-outline-variant">
+        <span class="font-bold">${label}</span>
+        <span class="text-right ${ok ? 'text-success' : 'text-error'}">${escapeHtml(value)}</span>
+      </div>
+    `).join('');
+  } catch (err) {
+    showToast(err.message || 'Gagal memuat settings');
+  }
+}
+
+async function loadKnowledge() {
+  try {
+    const res = await fetch(getApiBase() + '/api/knowledge');
+    if (!res.ok) throw new Error('Gagal memuat knowledge');
+    const rows = await res.json();
+    knowledgeRows = rows;
+    const list = document.getElementById('knowledgeList');
+    list.innerHTML = rows.length ? rows.map(row => `
+      <div class="border border-outline-variant rounded-xl p-md">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <h3 class="font-bold text-[15px]">${escapeHtml(row.topik)}</h3>
+          <div class="flex gap-2">
+            <button class="px-2 py-1 text-[12px] border border-outline-variant rounded-md" onclick="editKnowledge(${row.id})">Edit</button>
+            <button class="px-2 py-1 text-[12px] bg-error-container text-on-error-container rounded-md" onclick="deleteKnowledge(${row.id})">Hapus</button>
+          </div>
+        </div>
+        <p class="text-[13px] text-on-surface-variant whitespace-pre-line">${escapeHtml(row.konten)}</p>
+      </div>
+    `).join('') : '<div class="text-[13px] text-on-surface-variant">Knowledge base masih kosong.</div>';
+  } catch (err) {
+    showToast(err.message || 'Gagal memuat knowledge');
+  }
+}
+
+function editKnowledge(id) {
+  const row = knowledgeRows.find(item => item.id === id);
+  if (!row) return;
+  editingKnowledgeId = id;
+  document.getElementById('knowledgeTopic').value = row.topik;
+  document.getElementById('knowledgeContent').value = row.konten;
+  document.getElementById('knowledgeTopic').focus();
+}
+
+async function saveKnowledge() {
+  const topik = document.getElementById('knowledgeTopic').value.trim();
+  const konten = document.getElementById('knowledgeContent').value.trim();
+  if (!topik || !konten) {
+    showToast('Topik dan konten wajib diisi');
+    return;
+  }
+  const url = editingKnowledgeId ? '/api/knowledge/' + editingKnowledgeId : '/api/knowledge';
+  const method = editingKnowledgeId ? 'PATCH' : 'POST';
+  try {
+    const res = await fetch(getApiBase() + url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topik, konten })
+    });
+    if (!res.ok) throw new Error('Gagal menyimpan knowledge');
+    editingKnowledgeId = null;
+    document.getElementById('knowledgeTopic').value = '';
+    document.getElementById('knowledgeContent').value = '';
+    await loadKnowledge();
+    showToast('Knowledge disimpan');
+  } catch (err) {
+    showToast(err.message || 'Gagal menyimpan knowledge');
+  }
+}
+
+async function deleteKnowledge(id) {
+  if (!confirm('Hapus knowledge ini dari sumber jawaban AI?')) return;
+  try {
+    const res = await fetch(getApiBase() + '/api/knowledge/' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Gagal menghapus knowledge');
+    await loadKnowledge();
+    showToast('Knowledge dihapus');
+  } catch (err) {
+    showToast(err.message || 'Gagal menghapus knowledge');
+  }
+}
+
 function showToast(m) {
   const t = document.getElementById('globalToast');
   t.textContent = m;
-  t.classList.add('opacity-100', 'translate-y-4');
-  setTimeout(() => t.classList.remove('opacity-100', 'translate-y-4'), 3000);
+  t.classList.remove('opacity-0', 'translate-y-4');
+  t.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => {
+    t.classList.remove('opacity-100', 'translate-y-0');
+    t.classList.add('opacity-0', 'translate-y-4');
+  }, 3000);
 }
 function handleReplyKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendStaffReply(); } }
 function escapeHtml(s) { return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }

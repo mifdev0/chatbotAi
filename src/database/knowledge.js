@@ -70,7 +70,7 @@ if (count.c === 0) {
 
 // Ambil semua knowledge yang aktif
 function getAllKnowledge() {
-  return db.prepare('SELECT topik, konten FROM knowledge WHERE aktif = 1').all();
+  return db.prepare('SELECT id, topik, konten, created_at FROM knowledge WHERE aktif = 1 ORDER BY created_at DESC, id DESC').all();
 }
 
 // Ambil sebagai string untuk system prompt
