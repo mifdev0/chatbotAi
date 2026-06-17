@@ -18,7 +18,7 @@ db.exec(`
   )
 `);
 
-const seedData = [
+const DEFAULT_UMS_KNOWLEDGE = [
   [
     'Lupa Password Akun',
     `LUPA PASSWORD AKUN:
@@ -88,29 +88,29 @@ Kendala di SPADA:
   ]
 ];
 
-function syncDefaultKnowledge() {
+function ensureDefaultUmsKnowledge() {
   const genericTopics = ['Login Akun', 'Internet', 'Layanan Digital'];
   const deactivateGeneric = db.prepare('UPDATE knowledge SET aktif = 0 WHERE topik = ?');
   const findExisting = db.prepare('SELECT id FROM knowledge WHERE topik = ?');
   const insert = db.prepare('INSERT INTO knowledge (topik, konten, aktif) VALUES (?, ?, 1)');
-  const update = db.prepare('UPDATE knowledge SET konten = ?, aktif = 1 WHERE topik = ?');
+  const reactivate = db.prepare('UPDATE knowledge SET aktif = 1 WHERE topik = ?');
 
   for (const topic of genericTopics) {
     deactivateGeneric.run(topic);
   }
 
-  for (const [topik, konten] of seedData) {
+  for (const [topik, konten] of DEFAULT_UMS_KNOWLEDGE) {
     const row = findExisting.get(topik);
     if (row) {
-      update.run(konten, topik);
+      reactivate.run(topik);
     } else {
       insert.run(topik, konten);
     }
   }
 }
 
-syncDefaultKnowledge();
-console.log('[DB] Knowledge base UMS berhasil disinkronkan');
+ensureDefaultUmsKnowledge();
+console.log('[DB] Default knowledge IT Helpdesk UMS tersedia');
 
 // Ambil semua knowledge yang aktif
 function getAllKnowledge() {
