@@ -11,7 +11,25 @@ const { broadcast } = require('../utils/broadcast');
 // Deduplikasi message IDs
 const processedIds = new Set();
 const AI_FALLBACK_REPLY =
-  'Halo Sobat, saat ini sistem AI sedang tidak dapat memproses jawaban otomatis. Agar dapat ditangani lebih tepat, saya akan menghubungkan Sobat dengan tim kami.';
+  'Halo Sobat, saat ini sistem AI sedang tidak dapat memproses jawaban otomatis. Anda sudah terhubung dan masuk ke antrian admin. Mohon ditunggu, admin akan segera membalas.';
+const OUT_OF_SCOPE_REPLY =
+  'Halo Sobat, saya belum memiliki konteks terkait kendala tersebut di knowledge base IT Helpdesk UMS. Saya hanya bisa membantu berdasarkan informasi IT Helpdesk UMS yang tersedia.\n\nApakah Sobat ingin saya hubungkan dengan admin?';
+const ESCALATION_QUEUE_REPLY =
+  'Baik Sobat, Anda sudah terhubung dan masuk ke antrian admin. Mohon ditunggu untuk mendapatkan balasan dari admin.';
+const ESCALATION_CANCEL_REPLY =
+  'Baik Sobat, silakan pilih topik kendala IT Helpdesk UMS dari menu berikut.\n\n';
+
+function isAffirmative(input) {
+  return /^(iya|ya|yes|y|boleh|mau|oke|ok|lanjut|hubungkan|admin|iya kak|ya kak)$/i.test(input.trim());
+}
+
+function isNegative(input) {
+  return /^(tidak|nggak|enggak|ga|gak|no|n|jangan|batal)$/i.test(input.trim());
+}
+
+function isExternalTopic(input) {
+  return /\b(mbg|pemerintah|go\.id|pajak|bpjs|bank|brimo|bca|bni|bri|mandiri|shopee|tokopedia|lazada|gmail|facebook|instagram|tiktok)\b/i.test(input);
+}
 
 async function askAIWithFallback(messages, context, phone) {
   try {
@@ -20,8 +38,17 @@ async function askAIWithFallback(messages, context, phone) {
     const status = err.response?.status;
     const reason = err.response?.data?.error?.message || err.response?.data?.message || err.response?.data?.reason || err.message;
     console.error(`[AI Error] ${phone}: ${status || 'NO_STATUS'} ${reason}`);
+    db.updateStatus(phone, 'escalated');
+    db.resetMenuState(phone);
+    broadcast('status_change', { phone, status: 'escalated' });
     return AI_FALLBACK_REPLY;
   }
+}
+
+async function sendBotReply(phone, replyText) {
+  db.addMessage(phone, 'ai', replyText);
+  broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
+  await sendMessage(phone, replyText);
 }
 
 router.get('/webhook', (req, res) => {
@@ -83,6 +110,26 @@ router.post('/webhook', async (req, res) => {
 
     let replyText = '';
 
+    if (menuState === 'awaiting_escalation_confirmation') {
+      if (isAffirmative(userText)) {
+        db.updateStatus(phone, 'escalated');
+        db.resetMenuState(phone);
+        broadcast('status_change', { phone, status: 'escalated' });
+        console.log(`[ESKALASI DIKONFIRMASI] ${name} (${phone})`);
+        await sendBotReply(phone, ESCALATION_QUEUE_REPLY);
+        return;
+      }
+
+      if (isNegative(userText)) {
+        db.resetMenuState(phone);
+        await sendBotReply(phone, ESCALATION_CANCEL_REPLY + buildMenuText());
+        return;
+      }
+
+      await sendBotReply(phone, 'Mohon balas "iya" jika ingin saya hubungkan dengan admin, atau "tidak" untuk kembali ke menu IT Helpdesk UMS.');
+      return;
+    }
+
     // LOGIC: Jika user input angka (Pilih Menu)
     if (isValidMenuChoice(userText)) {
       const num = parseInt(userText.trim(), 10);
@@ -90,15 +137,11 @@ router.post('/webhook', async (req, res) => {
 
       // Pilihan terakhir = eskalasi manual
       if (chosen.topik === null) {
-        replyText =
-          `Baik Sobat! Saya akan menghubungkan Anda dengan tim layanan kami.\n` +
-          `Mohon tunggu sebentar, tim kami akan segera merespons. 🙏`;
-        db.addMessage(phone, 'ai', replyText);
         db.updateStatus(phone, 'escalated');
-        broadcast('message', { phone, from: 'ai', text: replyText, time: Date.now() });
+        db.resetMenuState(phone);
         broadcast('status_change', { phone, status: 'escalated' });
         console.log(`[ESKALASI MANUAL] ${name} (${phone})`);
-        await sendMessage(phone, replyText);
+        await sendBotReply(phone, ESCALATION_QUEUE_REPLY);
         return;
       }
 
@@ -118,16 +161,23 @@ router.post('/webhook', async (req, res) => {
     // Percakapan Natural (Bukan angka, bukan kata kunci menu)
     else {
       // Selalu coba cari context relevan
-      const context = retrieve(selectedTopic || userText);
+      const context = retrieve(userText);
+      const externalTopic = isExternalTopic(userText);
       
       // Jika baru pertama kali (IDLE) DAN tidak ada info relevan di DB -> Kasih Menu
       if (menuState === 'idle' && convo.messages.length <= 1 && !context) {
         console.log(`[MENU] Kirim menu karena pesan pertama dari ${name} dan tidak ada context relevan`);
         replyText = buildMenuText();
+      } else if ((!context && !selectedTopic) || externalTopic) {
+        console.log(`[OUT OF SCOPE] ${name} (${phone}): ${userText}`);
+        db.setMenuState(phone, 'awaiting_escalation_confirmation', null);
+        await sendBotReply(phone, OUT_OF_SCOPE_REPLY);
+        return;
       } else {
+        const aiContext = context || retrieve(selectedTopic);
         // Lanjut percakapan dengan AI (pakai context jika ada)
-        console.log(`[AI] Memproses pesan natural dari ${name} (Context: ${context ? 'Found' : 'None'})`);
-        replyText = await askAIWithFallback(convo.messages, context, phone);
+        console.log(`[AI] Memproses pesan natural dari ${name} (Context: ${aiContext ? 'Found' : 'None'})`);
+        replyText = await askAIWithFallback(convo.messages, aiContext, phone);
       }
     }
 
@@ -146,6 +196,10 @@ router.post('/webhook', async (req, res) => {
       db.resetMenuState(phone);
       broadcast('status_change', { phone, status: 'done' });
       console.log(`[SELESAI] ${name} (${phone})`);
+    }
+    else if (replyText.includes('Apakah Sobat ingin saya hubungkan dengan admin?')) {
+      db.setMenuState(phone, 'awaiting_escalation_confirmation', null);
+      console.log(`[MENUNGGU KONFIRMASI ESKALASI] ${name} (${phone})`);
     }
     // Cek eskalasi dari AI (jika bukan done)
     else {
