@@ -10,6 +10,19 @@ const { broadcast } = require('../utils/broadcast');
 
 // Deduplikasi message IDs
 const processedIds = new Set();
+const AI_FALLBACK_REPLY =
+  'Halo Sobat, saat ini sistem AI sedang tidak dapat memproses jawaban otomatis. Agar dapat ditangani lebih tepat, saya akan menghubungkan Sobat dengan tim kami.';
+
+async function askAIWithFallback(messages, context, phone) {
+  try {
+    return await askAI(messages, context);
+  } catch (err) {
+    const status = err.response?.status;
+    const reason = err.response?.data?.error?.message || err.response?.data?.message || err.response?.data?.reason || err.message;
+    console.error(`[AI Error] ${phone}: ${status || 'NO_STATUS'} ${reason}`);
+    return AI_FALLBACK_REPLY;
+  }
+}
 
 router.get('/webhook', (req, res) => {
   res.status(200).send('Webhook is active');
@@ -95,7 +108,7 @@ router.post('/webhook', async (req, res) => {
 
       const context = retrieve(chosen.topik);
       convo = db.getConversation(phone);
-      replyText = await askAI(convo.messages, context);
+      replyText = await askAIWithFallback(convo.messages, context, phone);
     } 
     // Jika user minta menu secara eksplisit
     else if (['menu', 'bantuan', 'pilihan', 'help'].includes(userLower)) {
@@ -114,7 +127,7 @@ router.post('/webhook', async (req, res) => {
       } else {
         // Lanjut percakapan dengan AI (pakai context jika ada)
         console.log(`[AI] Memproses pesan natural dari ${name} (Context: ${context ? 'Found' : 'None'})`);
-        replyText = await askAI(convo.messages, context);
+        replyText = await askAIWithFallback(convo.messages, context, phone);
       }
     }
 
