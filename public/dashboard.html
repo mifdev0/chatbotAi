@@ -618,7 +618,7 @@ async function loadAnalytics() {
   }
 }
 
-function metricCard(label, value, icon, tone) {
+function metricCard(label, value, icon, tone, description) {
   return `
     <div class="bg-white border border-outline-variant rounded-xl p-md">
       <div class="flex items-center justify-between mb-3">
@@ -626,6 +626,7 @@ function metricCard(label, value, icon, tone) {
         <span class="material-symbols-outlined text-[20px] ${tone}">${icon}</span>
       </div>
       <div class="text-[28px] font-bold text-on-surface">${value}</div>
+      ${description ? `<div class="text-[11px] text-on-surface-variant mt-1">${description}</div>` : ''}
     </div>
   `;
 }
@@ -682,7 +683,7 @@ function renderAnalytics() {
     cards.innerHTML = [
       metricCard('Resolution Rate', analyticsCache.resolutionRate + '%', 'task_alt', 'text-success'),
       metricCard('Escalation Rate', analyticsCache.escalationRate + '%', 'support_agent', 'text-warning'),
-      metricCard('Rata-rata Pesan', analyticsCache.averageMessagesPerConversation, 'chat', 'text-primary'),
+      metricCard('Pesan / Percakapan', analyticsCache.averageMessagesPerConversation, 'chat', 'text-primary', 'Total pesan dibagi total percakapan'),
     ].join('');
   }
 
