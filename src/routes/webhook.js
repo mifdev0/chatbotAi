@@ -18,6 +18,8 @@ const ESCALATION_QUEUE_REPLY =
   'Baik Sobat, Anda sudah terhubung dan masuk ke antrian admin. Mohon ditunggu untuk mendapatkan balasan dari admin.';
 const ESCALATION_CANCEL_REPLY =
   'Baik Sobat, silakan pilih topik kendala IT Helpdesk UMS dari menu berikut.\n\n';
+const CLOSING_REPLY =
+  'Baik Sobat, terima kasih sudah menghubungi IT Helpdesk UMS. Jika nanti ada kendala lagi, silakan ketik "menu" untuk melihat pilihan bantuan.';
 
 function isAffirmative(input) {
   return /^(iya|ya|yes|y|boleh|mau|oke|ok|lanjut|hubungkan|admin|iya kak|ya kak)$/i.test(input.trim());
@@ -25,6 +27,11 @@ function isAffirmative(input) {
 
 function isNegative(input) {
   return /^(tidak|nggak|enggak|ga|gak|no|n|jangan|batal)$/i.test(input.trim());
+}
+
+function isClosingIntent(input) {
+  const text = input.trim().toLowerCase();
+  return /\b(gajadi|ga jadi|gak jadi|nggak jadi|batal|sudah|udah|selesai|tidak ada|ga ada|gak ada|nggak ada|makasih|terima kasih|thanks|thank you)\b/i.test(text);
 }
 
 function isExternalTopic(input) {
@@ -111,6 +118,14 @@ router.post('/webhook', async (req, res) => {
     let replyText = '';
 
     if (menuState === 'awaiting_escalation_confirmation') {
+      if (isClosingIntent(userText)) {
+        db.updateStatus(phone, 'done');
+        db.resetMenuState(phone);
+        broadcast('status_change', { phone, status: 'done' });
+        await sendBotReply(phone, CLOSING_REPLY);
+        return;
+      }
+
       if (isAffirmative(userText)) {
         db.updateStatus(phone, 'escalated');
         db.resetMenuState(phone);
@@ -157,6 +172,13 @@ router.post('/webhook', async (req, res) => {
     else if (['menu', 'bantuan', 'pilihan', 'help'].includes(userLower)) {
       db.resetMenuState(phone);
       replyText = buildMenuText();
+    }
+    else if (isClosingIntent(userText)) {
+      db.updateStatus(phone, 'done');
+      db.resetMenuState(phone);
+      broadcast('status_change', { phone, status: 'done' });
+      await sendBotReply(phone, CLOSING_REPLY);
+      return;
     }
     // Percakapan Natural (Bukan angka, bukan kata kunci menu)
     else {
